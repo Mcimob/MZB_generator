@@ -5,3 +5,14 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.overviewItem {
+  background-color: bisque;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}

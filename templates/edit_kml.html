@@ -8,7 +8,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>MZB Generator</title>
+  <title>Edit MZB</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
@@ -21,23 +21,10 @@
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
   <div>
-    <h1>
-      Willkommen beim MZB Generator!
-    </h1>
-    <p>Lade eine <code>.kml</code> Datei hoch, um dazu eine MZB zu generieren.</p>
-    <form enctype="multipart/form-data" action="/upload" method="post">
-      <input type="file" name="file">
-      <input type="submit">
-      {% for file in files %}
-      <div class="overviewItem">
-        <p style="margin: 0">{{file.split('.')[0]}}</p>
-        <a href="/edit_kml/{{file.split('.')[0]}}">
-          <img src="/static/styles/images/edit-svgrepo-com.svg" width="30" />
-        </a>
-      </div>
-      {% endfor %}
-    </form>
+    <h1>Configure the current <code>.kml</code> file</h1>
+
   </div>
+
 </body>
 
 </html>
