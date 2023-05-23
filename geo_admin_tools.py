@@ -6,9 +6,29 @@ import openpyxl
 import matplotlib.pyplot as plt
 from wgs84_ch1903 import GPSConverter
 
+KML_FILE_LOCATION = "./files/kml/"
+XLSX_FILE_LOCATION = "./files/xlsx/"
+
+
+def generate(filename):
+    coords = kmlToLV03Coords(KML_FILE_LOCATION + filename + ".kml")
+    coords = getDetailedCoords(coords)
+    getRightAlts(coords)
+    print(coords)
+    poi = getPOI(coords)
+    with open(KML_FILE_LOCATION + filename + ".kml", "rt") as f:
+        text = f.read()
+    with open(KML_FILE_LOCATION + filename + ".kml", "w") as f:
+        addMarkersToKML(
+            f,
+            poi,
+            text,
+        )
+    writeToExcel(poi, XLSX_FILE_LOCATION + filename + ".xlsx")
+
 
 def create_marker(index, title, east, north):
-    return f"""<Placemark id="marker_{index + 1}">
+    return f"""<Placemark id="marker_{index + 1}_generated">
   <ExtendedData>
     <Data name="type">
       <value>marker</value>
@@ -53,8 +73,10 @@ def addMarkersToKML(outFile, poi, template):
     return
 
 
-def kmlToLV03Coords(kml_text):
-    root = parser.fromstring(kml_text).getroot()
+def kmlToLV03Coords(filename):
+    print(filename)
+    with open(filename, "rb") as f:
+        root = parser.parse(f).getroot()
     pms = root.xpath(
         ".//ns:Placemark[.//ns:LineString]", namespaces={"ns": nsmap[None]}
     )
@@ -86,22 +108,16 @@ def getRightAlts(coords):
 
 
 def getPOI(coords):
-    for i in range(len(coords)):
-        coords[i]["relative"] = (
+    for i, c in enumerate(coords):
+        c["relative"] = (
             "Start"
             if i == 0
             else "End"
             if i == len(coords) - 1
             else "High"
-            if (
-                coords[i - 1]["alt"] < coords[i]["alt"]
-                and coords[i]["alt"] > coords[i + 1]["alt"]
-            )
+            if (coords[i - 1]["alt"] < c["alt"] and c["alt"] > coords[i + 1]["alt"])
             else "Low"
-            if (
-                coords[i - 1]["alt"] > coords[i]["alt"]
-                and coords[i]["alt"] < coords[i + 1]["alt"]
-            )
+            if (coords[i - 1]["alt"] > c["alt"] and c["alt"] < coords[i + 1]["alt"])
             else None
         )
 
@@ -141,7 +157,8 @@ def writeToExcel(poi, filename):
         sheet[f"C{i+8}"] = p["alt"]
 
         if i != 0:
-            sheet[f"E{i+8}"] = (p["dist"] - p["dist"]) / 1000
+            sheet[f"E{i+8}"] = (p["dist"] - poi[i - 1]["dist"]) / 1000
+            print(sheet[f"E{i+8}"])
 
     book.save(filename)
 
