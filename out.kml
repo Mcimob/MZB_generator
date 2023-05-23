@@ -1,0 +1,575 @@
+﻿<kml xmlns="http://www.opengis.net/kml/2.2"
+  xmlns:gx="http://www.google.com/kml/ext/2.2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/kml/2.2 https://developers.google.com/kml/schema/kml22gx.xsd">
+  <Document>
+    <name>Drawing</name>
+    <Placemark id="linepolygon_1646820601900">
+      <ExtendedData>
+        <Data name="type">
+          <value>linepolygon</value>
+        </Data>
+      </ExtendedData>
+      <description></description>
+      <Style>
+        <LineStyle>
+          <color>ff0000ff</color>
+          <width>3</width>
+        </LineStyle>
+        <PolyStyle>
+          <color>660000ff</color>
+        </PolyStyle>
+      </Style>
+      <LineString>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.373761706184516,47.36190017765646 7.854560033191376,47.397599970601654</coordinates>
+      </LineString>
+    </Placemark>
+  <Placemark id="marker_1">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 0</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.37377477285483,47.36190030679349</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_2">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 1</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.434140173380194,47.36649467853708</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_3">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 2</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.451044338022337,47.36777544595701</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_4">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 3</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.487270290281187,47.37051162858215</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_5">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 4</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.496931167799992,47.37123935676657</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_6">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 5</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.506592308845872,47.37196627700799</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_7">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 6</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.542823943403081,47.374685029356925</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_8">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 7</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.5549019839513685,47.37558875790861</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_9">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 8</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.56456470045328,47.37631082980898</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_10">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 9</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.576643463964543,47.37721228544024</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_11">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 10</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.658789882097529,47.38330867942338</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_12">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 11</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.675704715894655,47.384556565711634</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_13">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 12</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.697453505389577,47.38615735764501</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_14">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 13</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.711953423858185,47.38722227206252</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_15">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 14</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.774793113220509,47.391815898437706</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_16">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 15</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.794130571133793,47.39322244554972</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_17">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 16</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.8086343477870965,47.39427523688568</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_18">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 17</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.815886444474077,47.39480094549988</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_19">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 18</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.83522608198649,47.39620061626633</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_20">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 19</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.852149086766332,47.39742267119952</coordinates>
+      </Point>
+    </Placemark><Placemark id="marker_21">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Marker 20</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.854566722316687,47.39759705076591</coordinates>
+      </Point>
+    </Placemark></Document>
+</kml>
