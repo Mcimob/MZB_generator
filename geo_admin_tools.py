@@ -5,19 +5,20 @@ import json
 import openpyxl
 import matplotlib.pyplot as plt
 from wgs84_ch1903 import GPSConverter
+from lxml import etree
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
 
 
 def generate(filename):
-    coords = kmlToLV03Coords(KML_FILE_LOCATION + filename + ".kml")
+    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
+    removeGeneratedMarkers(root)
+    coords = kmlToLV03Coords(root)
     coords = getDetailedCoords(coords)
     getRightAlts(coords)
-    print(coords)
     poi = getPOI(coords)
-    with open(KML_FILE_LOCATION + filename + ".kml", "rt") as f:
-        text = f.read()
+    text = etree.tostring(root)
     with open(KML_FILE_LOCATION + filename + ".kml", "w") as f:
         addMarkersToKML(
             f,
@@ -25,6 +26,20 @@ def generate(filename):
             text,
         )
     writeToExcel(poi, XLSX_FILE_LOCATION + filename + ".xlsx")
+
+
+def getRoot(filename):
+    with open(filename, "rb") as f:
+        return parser.parse(f).getroot()
+
+
+def removeGeneratedMarkers(root):
+    els = root.Document
+
+    for el in els.getchildren():
+        if el.get("id") and "generated" in el.get("id"):
+            els.remove(el)
+    return root
 
 
 def create_marker(index, title, east, north):
@@ -73,16 +88,13 @@ def addMarkersToKML(outFile, poi, template):
     return
 
 
-def kmlToLV03Coords(filename):
-    print(filename)
-    with open(filename, "rb") as f:
-        root = parser.parse(f).getroot()
+def kmlToLV03Coords(root):
     pms = root.xpath(
         ".//ns:Placemark[.//ns:LineString]", namespaces={"ns": nsmap[None]}
     )
     coords = []
     converter = GPSConverter()
-
+    print(pms)
     for coord in pms[0].LineString.coordinates.text.split(" "):
         xy = coord.split(",")
         print(float(xy[0]), float(xy[1]))
