@@ -6,6 +6,7 @@ import openpyxl
 import matplotlib.pyplot as plt
 from wgs84_ch1903 import GPSConverter
 from lxml import etree
+from pykml.factory import GX_ElementMaker as GX
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
@@ -18,14 +19,20 @@ def generate(filename):
     coords = getDetailedCoords(coords)
     getRightAlts(coords)
     poi = getPOI(coords)
-    text = etree.tostring(root)
-    with open(KML_FILE_LOCATION + filename + ".kml", "w") as f:
-        addMarkersToKML(
-            f,
-            poi,
-            text,
-        )
+    addMarkersToKML(root, poi)
     writeToExcel(poi, XLSX_FILE_LOCATION + filename + ".xlsx")
+    writeToKML(root, KML_FILE_LOCATION + filename + ".kml")
+    return poi, coords
+
+
+def generatePoiAndCoords(filename):
+    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
+    removeGeneratedMarkers(root)
+    coords = kmlToLV03Coords(root)
+    coords = getDetailedCoords(coords)
+    getRightAlts(coords)
+    poi = getPOI(coords)
+    return poi, coords
 
 
 def getRoot(filename):
@@ -43,7 +50,8 @@ def removeGeneratedMarkers(root):
 
 
 def create_marker(index, title, east, north):
-    return f"""<Placemark id="marker_{index + 1}_generated">
+    marker = parser.fromstring(
+        f"""<Placemark id="marker_{index + 1}_generated">
   <ExtendedData>
     <Data name="type">
       <value>marker</value>
@@ -55,8 +63,6 @@ def create_marker(index, title, east, north):
     <IconStyle>
       <Icon>
         <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
-        <gx:w>48</gx:w>
-        <gx:h>48</gx:h>
       </Icon>
       <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
     </IconStyle>
@@ -70,22 +76,22 @@ def create_marker(index, title, east, north):
     <coordinates>{east},{north}</coordinates>
   </Point>
 </Placemark>"""
+    )
+    icon = marker.Style.IconStyle.Icon
+    icon.append(GX.w(48))
+    icon.append(GX.h(48))
+
+    return marker
 
 
-def addMarkersToKML(outFile, poi, template):
+def addMarkersToKML(root, poi):
     converter = GPSConverter()
-    markers = []
     for index, p in enumerate(poi):
         north, east, alt = converter.LV03toWGS84(p["easting"], p["northing"], 0)
         marker = create_marker(index, index, east, north)
-        markers.append(marker)
+        root.Document.append(marker)
 
-    index = template.find("</Document>")
-    outFile.write(template[0:index])
-    for m in markers:
-        outFile.write(m)
-    outFile.write(template[index:-1])
-    return
+    return root
 
 
 def kmlToLV03Coords(root):
@@ -173,6 +179,11 @@ def writeToExcel(poi, filename):
             print(sheet[f"E{i+8}"])
 
     book.save(filename)
+
+
+def writeToKML(root, filename):
+    with open(filename, "wb") as f:
+        f.write(etree.tostring(root, pretty_print=True))
 
 
 """ x = [p['dist'] for p in coords]

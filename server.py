@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 import os
+import plotly.graph_objects as go
 from geo_admin_tools import *
+import plotly
 
 app = Flask(__name__)
 KML_FILE_LOCATION = "./files/kml/"
@@ -35,7 +37,9 @@ def upload_kml():
 def edit_kml(filename):
     if filename.split(".")[0] + ".xlsx" not in os.listdir(XLSX_FILE_LOCATION):
         return redirect(url_for("generate_xlsx", filename=filename))
-    return render_template("edit_kml.html")
+    poi, coords = generatePoiAndCoords(filename)
+    plot = createPlot(poi, coords)
+    return render_template("edit_kml.html", plot=plot)
 
 
 @app.route("/generate_xlsx/<filename>")
@@ -46,6 +50,12 @@ def generate_xlsx(filename):
 
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() == "kml"
+
+
+def createPlot(poi, coords):
+    fig1 = go.Scatter(x=[p["dist"] for p in poi], y=[p["alt"] for p in poi])
+    fig2 = go.Scatter(x=[p["dist"] for p in coords], y=[p["alt"] for p in coords])
+    return plotly.offline.plot([fig1, fig2], include_plotlyjs=False, output_type="div")
 
 
 if __name__ == "__main__":
