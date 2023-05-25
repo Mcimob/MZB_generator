@@ -11,7 +11,7 @@ import pickle
 from functools import reduce
 import lxml
 from utils import md5
-from db.db_utils import saveFileHashData
+from db.db_utils import saveFileHashData, getFileHashData
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
@@ -20,23 +20,16 @@ XLSX_FILE_LOCATION = "./files/xlsx/"
 def generate(filename):
     root = getRoot(KML_FILE_LOCATION + filename + ".kml")
     removeGeneratedMarkers(root)
-    coords = kmlToLV03Coords(root)
-    coords = getDetailedCoords(coords)
-    print(coords)
-    getRightAlts(coords)
+    coords = nameToDetailedCoords(filename)["measure_1"]
     poi = getPOI(coords)
     addMarkersToKML(root, poi)
     writeToExcel(poi, XLSX_FILE_LOCATION + filename + ".xlsx")
-    writeToKML(root, KML_FILE_LOCATION + filename + ".kml")
+    saveKML(root, KML_FILE_LOCATION + filename + ".kml")
     return poi, coords
 
 
 def generatePoiAndCoords(filename):
-    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
-    removeGeneratedMarkers(root)
-    coords = kmlToLV03Coords(root)
-    coords = getDetailedCoords(coords)
-    getRightAlts(coords)
+    coords = nameToDetailedCoords(filename)["measure_1"]
     poi = getPOI(coords)
     return poi, coords
 
@@ -81,14 +74,48 @@ def combineAndSave(file, filename):
       </LineString>
     </Placemark>"""
     root.Document.append(parser.fromstring(placemark_string))
-    saveKML(root, filename, coords)
+    saveKML(root, filename)
 
 
-def saveKML(root, filename, data):
+def nameToDetailedCoords(name):
+    item = getFileHashData(name)
+    if item is None:
+        raise Exception(f"No such line {name}")
+    generatedFH = md5(KML_FILE_LOCATION + name + ".kml")
+    print(item)
+    if generatedFH == getattr(item, "filehash"):
+        return json.loads(item.coordinate_data)
+    return fileToDetailedCoords(KML_FILE_LOCATION + name + ".kml")
+
+
+def fileToDetailedCoords(fname):
+    with open(fname, "rb") as f:
+        root = parser.parse(f).getroot()
+    pms = root.xpath(
+        "//ns:Placemark[starts-with(@id, 'measure_')]", namespaces={"ns": nsmap[None]}
+    )
+    converter = GPSConverter()
+    data = {}
+    for pm in pms:
+        pm_id = pm.get("id")
+        data[pm_id] = []
+        coords = parseLineString(pm)
+        for i, coord in enumerate(coords):
+            data[pm_id].append(
+                converter.WGS84toLV03(coord[0], coord[1], 0, clip=True)[0:2]
+            )
+        data[pm_id] = getDetailedCoords(data[pm_id])
+        getRightAlts(data[pm_id])
+    return data
+
+
+def saveKML(root, filename):
     with open(filename, "wb") as f:
         f.write(etree.tostring(root, pretty_print=True))
-    hash = md5(filename)
-    saveFileHashData(filename.split("/")[-1].split(".")[0], hash, data)
+    fh = md5(filename)
+    data = fileToDetailedCoords(filename)
+    saveFileHashData(filename.split("/")[-1].split(".")[0], fh, data)
+    # New Excel files should be generated
 
 
 def getRoot(filename):
@@ -150,18 +177,6 @@ def addMarkersToKML(root, poi):
     return root
 
 
-def kmlToLV03Coords(root):
-    pms = root.xpath(
-        ".//ns:Placemark[.//ns:LineString]", namespaces={"ns": nsmap[None]}
-    )
-    converter = GPSConverter()
-    coords = parseLineString(pms[0])
-    for i, coord in enumerate(coords):
-        coords[i] = converter.WGS84toLV03(coord[0], coord[1], 0, clip=True)[0:2]
-
-    return coords
-
-
 def connectLines(lineStrings):
     lines = []
     for line in lineStrings:
@@ -180,6 +195,7 @@ def parseLineString(placemark):
 def getDetailedCoords(coords):
     # return pickle.load(open("./api_data.pkl", "rb"))
     arg = {"type": "LineString", "coordinates": coords}
+    print("Making an API request")
     return requests.post(
         "https://api3.geo.admin.ch/rest/services/profile.json?sr=21781&distinct_points=True&nb_points=2000",
         json=arg,
@@ -247,17 +263,3 @@ def writeToExcel(poi, filename):
             print(sheet[f"E{i+8}"])
 
     book.save(filename)
-
-
-def writeToKML(root, filename):
-    with open(filename, "wb") as f:
-        f.write(etree.tostring(root, pretty_print=True))
-
-
-""" x = [p['dist'] for p in coords]
-y = [p['alt'] for p in coords]
-fig, ax = plt.subplots()
-
-ax.plot(x, y)
-
-plt.show() """

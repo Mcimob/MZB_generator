@@ -14,6 +14,6 @@ def saveFileHashData(name, fileHash, coordinate_data):
 
 
 def getFileHashData(name):
-    row = db.session.execute(db.select(FileHashes).filter_by(name=name)).first()
+    row = FileHashes.query.filter_by(name=name).first()
     print(row)
     return row
