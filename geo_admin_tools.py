@@ -1,15 +1,12 @@
-from pykml import parser
-from pykml.factory import nsmap
-import requests
-import json
-import openpyxl
-import matplotlib.pyplot as plt
-from wgs84_ch1903 import GPSConverter
-from lxml import etree
-from pykml.factory import GX_ElementMaker as GX
-import pickle
 from functools import reduce
+import json
+import requests
+from pykml import parser
+from pykml.factory import nsmap, GX_ElementMaker as GX
+import openpyxl
+from lxml import etree
 import lxml
+from wgs84_ch1903 import GPSConverter
 from utils import md5
 from db.db_utils import saveFileHashData, getFileHashData
 
@@ -21,7 +18,7 @@ def generate(filename):
     root = getRoot(KML_FILE_LOCATION + filename + ".kml")
     removeGeneratedMarkers(root)
     coords = nameToDetailedCoords(filename)["measure_1"]
-    poi = getPOI(coords)
+    poi = getPOI(coords, root)
     addMarkersToKML(root, poi)
     writeToExcel(poi, XLSX_FILE_LOCATION + filename + ".xlsx")
     saveKML(root, KML_FILE_LOCATION + filename + ".kml")
@@ -30,7 +27,8 @@ def generate(filename):
 
 def generatePoiAndCoords(filename):
     coords = nameToDetailedCoords(filename)["measure_1"]
-    poi = getPOI(coords)
+    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
+    poi = getPOI(coords, root)
     return poi, coords
 
 
@@ -48,6 +46,7 @@ def combineAndSave(file, filename):
             if element_type in ["measure", "linepolygon"]:
                 root.Document.remove(el)
     coordinate_string = ""
+    # Some funky problem here
     for c in coords:
         coordinate_string += f"{str(c[1])},{str(c[0])} "
     placemark_string = f"""
@@ -197,7 +196,7 @@ def getDetailedCoords(coords):
     arg = {"type": "LineString", "coordinates": coords}
     print("Making an API request")
     return requests.post(
-        "https://api3.geo.admin.ch/rest/services/profile.json?sr=21781&distinct_points=True&nb_points=2000",
+        "https://api3.geo.admin.ch/rest/services/profile.json?sr=21781&distinct_points=True",
         json=arg,
         timeout=3,
     ).json()
@@ -209,7 +208,7 @@ def getRightAlts(coords):
         del p["alts"]
 
 
-def getPOI(coords):
+def getPOI(coords, root):
     for i, c in enumerate(coords):
         c["relative"] = (
             "Start"
@@ -247,7 +246,32 @@ def getPOI(coords):
             over = True
             margin += 5
             poi = []
+    for i, p in enumerate(poi):
+        p["id"] = f"marker_{i}"
+        p["name"] = p["relative"]
+    print(poi)
+    getPointNames(poi, root)
     return poi
+
+
+def getPointNames(coords, root):
+    converter = GPSConverter()
+    suppliedMarkers = list(
+        filter(
+            lambda x: x.get("id")
+            and "generated" not in x.get("id")
+            and "marker" in x.get("id"),
+            root.Document.getchildren(),
+        )
+    )
+    suppliedPoints = [p.Point.coordinates.text.split(",") for p in suppliedMarkers]
+    suppliedPoints = [
+        converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in suppliedPoints
+    ]
+    for c in coords:
+        for i, p in enumerate(suppliedPoints):
+            if pointsClose([c["easting"], c["northing"]], p):
+                c["name"] = suppliedMarkers[i].name
 
 
 def writeToExcel(poi, filename):
@@ -263,3 +287,9 @@ def writeToExcel(poi, filename):
             print(sheet[f"E{i+8}"])
 
     book.save(filename)
+
+
+def pointsClose(p1, p2):
+    MARGIN = 50
+    dist = (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
+    return dist <= MARGIN

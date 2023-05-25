@@ -1,20 +1,18 @@
+import os
 from flask import (
     Flask,
     render_template,
     request,
     redirect,
     url_for,
-    send_from_directory,
     send_file,
 )
 from werkzeug.utils import secure_filename
-import os
 import plotly.graph_objects as go
-from geo_admin_tools import *
 import plotly
-from flask_sqlalchemy import SQLAlchemy
+from geo_admin_tools import *
 from db.database import db
-from db.db_utils import getFileHashData, saveFileHashData
+from db.db_utils import getFileHashData
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///geo_admin_tools.db"
@@ -57,7 +55,7 @@ def edit_kml(filename):
         return redirect(url_for("generate_xlsx", filename=filename))
     poi, coords = generatePoiAndCoords(filename)
     plot = createPlot(poi, coords)
-    return render_template("edit_kml.html", plot=plot, filename=filename)
+    return render_template("edit_kml.html", plot=plot, filename=filename, poi=poi)
 
 
 @app.route("/generate_xlsx/<filename>")

@@ -30,6 +30,60 @@
         <coordinates>7.1680216340814,47.102926258242924</coordinates>
       </Point>
     </Placemark>
+    <Placemark id="marker_1">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Lüscherz</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.150049000592819,47.04643186962985</coordinates>
+      </Point>
+    </Placemark>
+    <Placemark id="marker_2">
+      <ExtendedData>
+        <Data name="type">
+          <value>marker</value>
+        </Data>
+      </ExtendedData>
+      <name>Evilard</name>
+      <description></description>
+      <Style>
+        <IconStyle>
+          <Icon>
+            <href>https://api3.geo.admin.ch/color/255,0,0/marker-24@2x.png</href>
+            <gx:w>48</gx:w>
+            <gx:h>48</gx:h>
+          </Icon>
+          <hotSpot x="24" y="4.799999999999997" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LabelStyle>
+          <color>ff0000ff</color>
+        </LabelStyle>
+      </Style>
+      <Point>
+        <tessellate>1</tessellate>
+        <altitudeMode>clampToGround</altitudeMode>
+        <coordinates>7.2393793781438935,47.14945945985855</coordinates>
+      </Point>
+    </Placemark>
     <Placemark id="measure_1587192474946">
       <ExtendedData>
         <Data name="overlays"/>
