@@ -1,11 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    send_from_directory,
+    send_file,
+)
 from werkzeug.utils import secure_filename
 import os
 import plotly.graph_objects as go
 from geo_admin_tools import *
 import plotly
+from flask_sqlalchemy import SQLAlchemy
+from db.database import db
+from db.db_utils import getFileHashData, saveFileHashData
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///geo_admin_tools.db"
+db.init_app(app)
+with app.app_context():
+    db.create_all()
+    getFileHashData("map")
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
 
@@ -29,8 +45,10 @@ def upload_kml():
     print("here")
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(KML_FILE_LOCATION + filename)
-        return redirect(url_for("index"))
+        combineAndSave(file, KML_FILE_LOCATION + filename)
+        # file.save(KML_FILE_LOCATION + filename)
+        # return redirect(url_for("index"))
+        return "Success!"
 
 
 @app.route("/edit_kml/<filename>")
@@ -39,13 +57,19 @@ def edit_kml(filename):
         return redirect(url_for("generate_xlsx", filename=filename))
     poi, coords = generatePoiAndCoords(filename)
     plot = createPlot(poi, coords)
-    return render_template("edit_kml.html", plot=plot)
+    return render_template("edit_kml.html", plot=plot, filename=filename)
 
 
 @app.route("/generate_xlsx/<filename>")
 def generate_xlsx(filename):
     generate(filename)
     return redirect(url_for("edit_kml", filename=filename))
+
+
+@app.route("/download/<filename>")
+def download(filename):
+    file_type = filename.split(".")[1]
+    return send_file(f"./files/{file_type}/{filename}", as_attachment=True)
 
 
 def allowed_file(filename):
