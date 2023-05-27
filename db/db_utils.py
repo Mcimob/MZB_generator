@@ -1,19 +1,20 @@
 from db.database import db
 from db.models import FileHashes
 import json
+import os
+
+JSON_FILE_LOCATION = "db/json/"
 
 
-def saveFileHashData(name, fileHash, coordinate_data):
-    getFileHashData(name)
-    newRow = FileHashes(
-        name=name, filehash=fileHash, coordinate_data=json.dumps(coordinate_data)
-    )
-    db.session.add(newRow)
-    db.session.commit()
-    return
+def saveCoordinateData(name, coordinate_data):
+    with open(JSON_FILE_LOCATION + name + ".json", "w") as f:
+        json.dump(coordinate_data, f)
 
 
-def getFileHashData(name):
-    row = FileHashes.query.filter_by(name=name).first()
-    print(row)
-    return row
+def getCoordinateData(name):
+    with open(JSON_FILE_LOCATION + name + ".json", "r") as f:
+        return json.load(f)
+
+
+def deleteCoordinateData(name):
+    os.remove(JSON_FILE_LOCATION + name + ".json")

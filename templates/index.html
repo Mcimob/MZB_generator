@@ -31,9 +31,14 @@
       {% for file in files %}
       <div class="overviewItem">
         <p style="margin: 0">{{file.split('.')[0]}}</p>
-        <a href="/edit_kml/{{file.split('.')[0]}}">
-          <img src="/static/styles/images/edit-svgrepo-com.svg" width="30" />
-        </a>
+        <div>
+          <a href="/edit_kml/{{file.split('.')[0]}}">
+            <img src="/static/styles/images/edit-svgrepo-com.svg" width="30" />
+          </a>
+          <a href="/delete_kml/{{file.split('.')[0]}}">
+            <img src="/static/styles/images/trash-svgrepo-com.svg" width="30" />
+          </a>
+        </div>
       </div>
       {% endfor %}
     </form>

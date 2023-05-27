@@ -23,7 +23,9 @@
     <![endif]-->
   <div>
     <h1>Configure the current <code>.kml</code> file</h1>
+    {% for plot in plots %}
     {{plot | safe}}
+    {% endfor %}
     <a href="/download/{{filename}}.xlsx" target="_blank">Download MZB</a>
     {% for p in poi %}
     <h4>{{p['id']}}, {{p['name']}}</h4>
