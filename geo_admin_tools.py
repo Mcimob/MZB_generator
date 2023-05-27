@@ -1,6 +1,5 @@
 from functools import reduce
 import os
-import json
 import requests
 from pykml import parser
 from pykml.factory import nsmap, GX_ElementMaker as GX
@@ -8,7 +7,6 @@ import openpyxl
 from lxml import etree
 import lxml
 from wgs84_ch1903 import GPSConverter
-from utils import md5
 from db.db_utils import saveCoordinateData, getCoordinateData, deleteCoordinateData
 
 KML_FILE_LOCATION = "./files/kml/"

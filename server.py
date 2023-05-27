@@ -11,14 +11,9 @@ from werkzeug.utils import secure_filename
 import plotly.graph_objects as go
 import plotly
 from geo_admin_tools import *
-from db.database import db
-from db.db_utils import getCoordinateData
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///geo_admin_tools.db"
-db.init_app(app)
-with app.app_context():
-    db.create_all()
+
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
 

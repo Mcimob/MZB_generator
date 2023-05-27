@@ -1,5 +1,3 @@
-from db.database import db
-from db.models import FileHashes
 import json
 import os
 
