@@ -64,7 +64,6 @@ def rootToDetailedCoords(root):
             root.Document.getchildren(),
         )
     )
-    print(pms)
 
     converter = GPSConverter()
     data = {}
@@ -90,7 +89,7 @@ def coordinateDataToFile(root, data):
     for key, l in data["poi"].items():
         poi = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in l]
         for i, p in enumerate(poi):
-            root.Document.append(create_marker(i, data["poi"][i]["name"], p[1], p[0]))
+            root.Document.append(create_marker(i, l[i]["name"], p[1], p[0]))
 
     return root
 
@@ -118,7 +117,7 @@ def removeGenerated(root):
 
 def create_marker(index, title, east, north):
     marker = parser.fromstring(
-        f"""<Placemark id="marker_{title}_{index}_generated">
+        f"""<Placemark id="marker_{index}_generated">
   <ExtendedData>
     <Data name="type">
       <value>marker</value>
@@ -278,14 +277,7 @@ def generatePOI(coords, root):
 
 def getPointNames(coords, root):
     converter = GPSConverter()
-    suppliedMarkers = list(
-        filter(
-            lambda x: x.get("id")
-            and "marker" in x.get("id")
-            and "generated" not in x.get("id"),
-            root.Document.getchildren(),
-        )
-    )
+    suppliedMarkers = getSuppliedMarkers(root)
     suppliedPoints = [p.Point.coordinates.text.split(",") for p in suppliedMarkers]
     suppliedPoints = [
         converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in suppliedPoints
@@ -294,6 +286,17 @@ def getPointNames(coords, root):
         for i, p in enumerate(suppliedPoints):
             if pointsClose([c["easting"], c["northing"]], p):
                 c["name"] = suppliedMarkers[i].name.text
+
+
+def getSuppliedMarkers(root):
+    return list(
+        filter(
+            lambda x: x.get("id")
+            and "marker" in x.get("id")
+            and "generated" not in x.get("id"),
+            root.Document.getchildren(),
+        )
+    )
 
 
 def writeToExcel(poi, filename):
@@ -306,7 +309,6 @@ def writeToExcel(poi, filename):
 
         if i != 0:
             sheet[f"E{i+8}"] = (p["dist"] - poi[i - 1]["dist"]) / 1000
-            print(sheet[f"E{i+8}"])
 
     book.save(filename)
 
@@ -315,6 +317,45 @@ def pointsClose(p1, p2):
     MARGIN = 50
     dist = (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
     return dist <= MARGIN
+
+
+def breakLineAtPoint(fname, line_name, point):
+    converter = GPSConverter()
+    root = getRoot(KML_FILE_LOCATION + fname + ".kml")
+    suppliedMarkersRaw = getSuppliedMarkers(root)
+    suppliedMarkers = {
+        x.get("id"): x.Point.coordinates.text.split(",") for x in suppliedMarkersRaw
+    }
+    if point not in suppliedMarkers.keys():
+        return False
+    coords = converter.WGS84toLV03(
+        float(suppliedMarkers[point][1]), float(suppliedMarkers[point][0]), 0, clip=True
+    )[0:2]
+    data = getCoordinateData(fname)
+    line = data["coords"][line_name][:]
+    closestIndex = 0
+    closestDistance = float("inf")
+    for i, p in enumerate(line):
+        new_dist = getPointDistance(p["easting"], p["northing"], coords[0], coords[1])
+        if new_dist < closestDistance:
+            closestDistance = new_dist
+            closestIndex = i
+
+    new_line_index = 0
+    print()
+    while "measure_" + str(new_line_index) + "_generated" in data["coords"].keys():
+        new_line_index += 1
+    del data["coords"][line_name]
+    data["coords"][line_name] = line[: closestIndex + 1]
+    data["coords"][f"measure_{new_line_index}_generated"] = line[closestIndex:]
+    saveCoordinateData(fname, data)
+    generate(fname)
+
+    return
+
+
+def getPointDistance(px, py, qx, qy):
+    return (px - qx) ** 2 + (py - qy) ** 2
 
 
 def removeRecord(name):

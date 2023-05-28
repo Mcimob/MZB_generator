@@ -21,15 +21,33 @@
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-  <div>
-    <h1>Configure the current <code>.kml</code> file</h1>
-    {% for plot in plots %}
-    {{plot | safe}}
+  <h1>Configure the current <code>.kml</code> file</h1>
+  <div class="editLineContainer">
+    {% for key, item in poi.items()%}
+    <div>
+      {{plots[key] | safe}}<label for="breakers">Choose Breakpoint:</label>
+      <form id="breakpoint_{{key}}" action="/break_kml" method="post">
+        <input type="hidden" value="{{filename}}" name="filename" />
+        <input type="hidden" value="{{key}}" name="linesegment" />
+        <select name="breaker" id="breaker">
+          {% for p in suppliedMarkers %}
+          <option value="{{p.get('id')}}">{{p.name}}</option>
+          {% endfor %}
+        </select>
+        <input type="submit" />
+      </form>
+      <input class="spoilerbutton" type="button" value="Hide"
+        onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
+      <div class="spoiler">
+        <div>
+          {% for p in item %}
+          <p>{{p['id']}}, {{p['name']}}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
     {% endfor %}
     <a href="/download/{{filename}}.xlsx" target="_blank">Download MZB</a>
-    {% for p in poi %}
-    <h4>{{p['id']}}, {{p['name']}}</h4>
-    {% endfor %}
 
   </div>
 

@@ -16,3 +16,27 @@ body {
   align-items: center;
   justify-content: space-between;
 }
+
+.editLineContainer {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.spoiler {
+  overflow: hidden;
+  background-color: bisque;
+}
+
+.spoiler>div {
+  margin: 5px;
+  overflow: hidden;
+  transition: all 1s ease;
+}
+
+.spoilerbutton[value="Show"]+.spoiler>div {
+  max-height: 0px;
+}
+
+.spoilerbutton[value="Hide"]+.spoiler>div {
+  max-height: 600px;
+}

@@ -43,10 +43,15 @@ def upload_kml():
 
 @app.route("/edit_kml/<filename>")
 def edit_kml(filename):
+    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
     data = getCoordinateData(filename)
     plots = createPlots(data["poi"], data["coords"])
     return render_template(
-        "edit_kml.html", plots=plots, filename=filename, poi=data["poi"]
+        "edit_kml.html",
+        plots=plots,
+        filename=filename,
+        poi=data["poi"],
+        suppliedMarkers=getSuppliedMarkers(root),
     )
 
 
@@ -68,21 +73,30 @@ def download(filename):
     return send_file(f"./files/{file_type}/{filename}", as_attachment=True)
 
 
+@app.route("/break_kml", methods=["POST"])
+def break_kml():
+    fname = request.form["filename"]
+    break_point = request.form["breaker"]
+    line_segment = request.form["linesegment"]
+    breakLineAtPoint(fname, line_segment, break_point)
+    return redirect(url_for("edit_kml", filename=fname))
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() == "kml"
 
 
 def createPlots(poi, coords):
-    print(poi)
-    out = []
+    out = {}
     for key, item in coords.items():
         fig1 = go.Scatter(
             x=[p["dist"] for p in poi[key]], y=[p["alt"] for p in poi[key]]
         )
         fig2 = go.Scatter(x=[p["dist"] for p in item], y=[p["alt"] for p in item])
-        out.append(
-            plotly.offline.plot([fig1, fig2], include_plotlyjs=False, output_type="div")
+        out[key] = plotly.offline.plot(
+            [fig1, fig2], include_plotlyjs=False, output_type="div"
         )
+
     return out
 
 
