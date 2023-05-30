@@ -12,6 +12,10 @@ from db.db_utils import saveCoordinateData, getCoordinateData, deleteCoordinateD
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
 
+POINT_CLOSE_MARGIN = 50
+
+converter = GPSConverter()
+
 
 def generate(filename):
     kml_fname = KML_FILE_LOCATION + filename + ".kml"
@@ -65,7 +69,6 @@ def rootToDetailedCoords(root):
         )
     )
 
-    converter = GPSConverter()
     data = {}
     for pm in pms:
         pm_id = pm.get("id")
@@ -81,7 +84,6 @@ def rootToDetailedCoords(root):
 
 
 def coordinateDataToFile(root, data):
-    converter = GPSConverter()
     for key, l in data["coords"].items():
         line = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in l]
         root.Document.append(createLine(key, line))
@@ -186,7 +188,6 @@ def createLine(id: str, coordinates: list[list[float]]):
 
 
 def addMarkers(root, poi):
-    converter = GPSConverter()
     for key, item in poi.items():
         for index, p in enumerate(item):
             north, east, alt = converter.LV03toWGS84(p["easting"], p["northing"], 0)
@@ -276,20 +277,15 @@ def generatePOI(coords, root):
 
 
 def getPointNames(coords, root):
-    converter = GPSConverter()
-    suppliedMarkers = getSuppliedMarkers(root)
-    suppliedPoints = [p.Point.coordinates.text.split(",") for p in suppliedMarkers]
-    suppliedPoints = [
-        converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in suppliedPoints
-    ]
+    suppliedPoints = getSuppliedMarkers(root)
     for c in coords:
         for i, p in enumerate(suppliedPoints):
-            if pointsClose([c["easting"], c["northing"]], p):
-                c["name"] = suppliedMarkers[i].name.text
+            if pointsClose(c, p):
+                c["name"] = p["name"]
 
 
 def getSuppliedMarkers(root):
-    return list(
+    markersRaw = list(
         filter(
             lambda x: x.get("id")
             and "marker" in x.get("id")
@@ -297,6 +293,30 @@ def getSuppliedMarkers(root):
             root.Document.getchildren(),
         )
     )
+    markersTexts = [p.Point.coordinates.text.split(",") for p in markersRaw]
+    markersCoords = [
+        converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in markersTexts
+    ]
+    return [
+        {
+            "id": markersRaw[i].get("id"),
+            "name": markersRaw[i].name.text,
+            "easting": m[0],
+            "northing": m[1],
+        }
+        for i, m in enumerate(markersCoords)
+    ]
+
+
+def filterMarkersCloseToEdges(markers, data):
+    out = {}
+    for key, value in data["coords"].items():
+        out[key] = []
+        for m in markers:
+            if not pointsClose(m, value[0]) and not pointsClose(m, value[-1]):
+                out[key].append(m)
+
+    return out
 
 
 def writeToExcel(poi, filename):
@@ -314,29 +334,24 @@ def writeToExcel(poi, filename):
 
 
 def pointsClose(p1, p2):
-    MARGIN = 50
-    dist = (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
-    return dist <= MARGIN
+    dist = (p1["easting"] - p2["easting"]) ** 2 + (p1["northing"] - p2["northing"]) ** 2
+    return dist <= POINT_CLOSE_MARGIN
 
 
 def breakLineAtPoint(fname, line_name, point):
-    converter = GPSConverter()
     root = getRoot(KML_FILE_LOCATION + fname + ".kml")
-    suppliedMarkersRaw = getSuppliedMarkers(root)
-    suppliedMarkers = {
-        x.get("id"): x.Point.coordinates.text.split(",") for x in suppliedMarkersRaw
-    }
-    if point not in suppliedMarkers.keys():
+    markers = getSuppliedMarkers(root)
+    if point not in [x["name"] for x in markers]:
         return False
-    coords = converter.WGS84toLV03(
-        float(suppliedMarkers[point][1]), float(suppliedMarkers[point][0]), 0, clip=True
-    )[0:2]
+    coords = list(filter(lambda x: x["name"] == point, markers))[0]
     data = getCoordinateData(fname)
     line = data["coords"][line_name][:]
     closestIndex = 0
     closestDistance = float("inf")
     for i, p in enumerate(line):
-        new_dist = getPointDistance(p["easting"], p["northing"], coords[0], coords[1])
+        new_dist = getPointDistance(
+            p["easting"], p["northing"], coords["easting"], coords["northing"]
+        )
         if new_dist < closestDistance:
             closestDistance = new_dist
             closestIndex = i

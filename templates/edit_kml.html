@@ -30,8 +30,8 @@
         <input type="hidden" value="{{filename}}" name="filename" />
         <input type="hidden" value="{{key}}" name="linesegment" />
         <select name="breaker" id="breaker">
-          {% for p in suppliedMarkers %}
-          <option value="{{p.get('id')}}">{{p.name}}</option>
+          {% for p in suppliedMarkers[key] %}
+          <option value="{{p['id']}}">{{p['name']}}</option>
           {% endfor %}
         </select>
         <input type="submit" />

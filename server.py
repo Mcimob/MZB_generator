@@ -46,12 +46,13 @@ def edit_kml(filename):
     root = getRoot(KML_FILE_LOCATION + filename + ".kml")
     data = getCoordinateData(filename)
     plots = createPlots(data["poi"], data["coords"])
+    markers = filterMarkersCloseToEdges(getSuppliedMarkers(root), data)
     return render_template(
         "edit_kml.html",
         plots=plots,
         filename=filename,
         poi=data["poi"],
-        suppliedMarkers=getSuppliedMarkers(root),
+        suppliedMarkers=markers,
     )
 
 
