@@ -1,13 +1,19 @@
 from functools import reduce
 import os
 import requests
+import math
+from time import time
 from pykml import parser
 from pykml.factory import nsmap, GX_ElementMaker as GX
 import openpyxl
 from lxml import etree
 import lxml
 from wgs84_ch1903 import GPSConverter
-from db.db_utils import saveCoordinateData, getCoordinateData, deleteCoordinateData
+from db.db_utils import (
+    saveCoordinateData,
+    getCoordinateData,
+    deleteCoordinateData,
+)
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
@@ -29,10 +35,8 @@ def generate(filename):
 
 
 def combineAndSave(file, filename):
-    root = combine(file)
-    data = createDataFromFile(root)
-    addMarkers(root, data["poi"])
-    saveKML(root, filename, data)
+    data = createDataFromFile(file)
+    saveCoordinateData(filename.split("/")[-1].split(".")[0], data)
 
 
 def combine(file):
@@ -53,18 +57,59 @@ def combine(file):
     return root
 
 
-def createDataFromFile(root):
+def createDataFromFile(file):
+    root = parser.parse(file).getroot()
     coords = rootToDetailedCoords(root)
+
+    changed = True
+    while changed:
+        changed = combineLines(coords)
+
+    markers = getSuppliedMarkers(root, coords)
     poi = generatePOI(
-        coords, root
+        coords, markers
     )  # POI Are named with available markers or relative position
-    return {"coords": coords, "poi": poi}
+    return {"coords": coords, "poi": poi, "markers": markers}
+
+
+def combineLines(coords):
+    for key, value in coords.items():
+        for k, v in coords.items():
+            if key == k:
+                continue
+            if pointEquals(value[0], v[-1]):
+                for c in value:
+                    c["dist"] += v[-1]["dist"]
+                combinedLine = v[:] + value[1:]
+                print(value[0], v[-1], key, k)
+                del coords[key]
+                del coords[k]
+                coords[f"measure_generated_{str(round(time()*1000))}"] = combinedLine
+
+                return True
+
+            if pointEquals(value[-1], v[0]):
+                for c in v:
+                    c["dist"] += value[-1]["dist"]
+                combinedLine = value[:] + v[1:]
+                print(value[-1], v[0], key, k)
+                del coords[key]
+                del coords[k]
+                coords[f"measure_generated_{str(round(time()*1000))}"] = combinedLine
+
+                return True
+    return False
+
+
+def pointEquals(p1, p2):
+    return p1["easting"] == p2["easting"] and p1["northing"] == p2["northing"]
 
 
 def rootToDetailedCoords(root):
     pms = list(
         filter(
-            lambda x: x.get("id") and "measure" in x.get("id"),
+            lambda x: x.get("id")
+            and ("measure" in x.get("id") or "linepolygon" in x.get("id")),
             root.Document.getchildren(),
         )
     )
@@ -228,7 +273,7 @@ def getRightAlts(coords):
         del p["alts"]
 
 
-def generatePOI(coords, root):
+def generatePOI(coords, markers):
     out = {}
     for key, item in coords.items():
         for i, c in enumerate(item):
@@ -246,6 +291,7 @@ def generatePOI(coords, root):
 
         poi_tmp = [c for c in item if c["relative"]]
         poi = []
+        MAX_ITEMS = 19 - len(markers[key])
         over = True
         margin = 0
         while over:
@@ -261,35 +307,37 @@ def generatePOI(coords, root):
                 ):
                     poi.append(poi_tmp[i])
 
-            poi.append(poi_tmp[-1])
-            poi.insert(0, poi_tmp[0])
-
-            if len(poi) > 21:
+            if len(poi) > MAX_ITEMS:
                 over = True
                 margin += 5
                 poi = []
+        insertMarkersToPOI(poi, poi_tmp[0], poi_tmp[-1], markers[key])
+
         for i, p in enumerate(poi):
-            p["id"] = f"marker_{i}"
-            p["name"] = p["relative"]
-        getPointNames(poi, root)
+            p["id"] = f"marker_{getCurrentTimeString()}"
+            if "name" not in p.keys():
+                p["name"] = p["relative"]
         out[key] = poi
     return out
 
 
-def getPointNames(coords, root):
-    suppliedPoints = getSuppliedMarkers(root)
-    for c in coords:
-        for i, p in enumerate(suppliedPoints):
-            if pointsClose(c, p):
-                c["name"] = p["name"]
+def insertMarkersToPOI(poi, start, end, markers):
+    poi.insert(0, start)
+    poi.append(end)
+    for m in markers:
+        for i, p in enumerate(poi):
+            if pointEquals(p, m) or p["dist"] == m["dist"]:
+                poi[i] = m
+                break
+            if p["dist"] > m["dist"]:
+                poi.insert(i, m)
+                break
 
 
-def getSuppliedMarkers(root):
+def getSuppliedMarkers(root, coords):
     markersRaw = list(
         filter(
-            lambda x: x.get("id")
-            and "marker" in x.get("id")
-            and "generated" not in x.get("id"),
+            lambda x: x.get("id") and "marker" in x.get("id"),
             root.Document.getchildren(),
         )
     )
@@ -297,18 +345,33 @@ def getSuppliedMarkers(root):
     markersCoords = [
         converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in markersTexts
     ]
-    return [
-        {
-            "id": markersRaw[i].get("id"),
-            "name": markersRaw[i].name.text,
-            "easting": m[0],
-            "northing": m[1],
-        }
-        for i, m in enumerate(markersCoords)
-    ]
+    markersTitles = [p.name.text for p in markersRaw]
+    print(markersTitles)
+
+    out = {}
+
+    for key, value in coords.items():
+        out[key] = []
+        for i, p in enumerate(markersCoords):
+            point, dist, index = closestPointOnCoords(
+                value, {"easting": p[0], "northing": p[1]}
+            )
+            point["name"] = markersTitles[i]
+
+            if dist > POINT_CLOSE_MARGIN:
+                continue
+
+            out[key].append(point)
+
+    for key, value in out.items():
+        value.sort(key=lambda x: x["dist"])
+
+    return out
 
 
-def filterMarkersCloseToEdges(markers, data):
+def filterMarkersCloseToEdges(data):
+    markers = data["markers"]
+    coords = data["coords"]
     out = {}
     for key, value in data["coords"].items():
         out[key] = []
@@ -375,6 +438,71 @@ def getPointDistance(px, py, qx, qy):
 
 def removeRecord(name):
     deleteCoordinateData(name)
-    os.remove(KML_FILE_LOCATION + name + ".kml")
     if (XLSX_FILE_LOCATION + name + ".xlsx") in os.listdir("./files/xlsx/"):
         os.remove(XLSX_FILE_LOCATION + name + ".xlsx")
+
+
+def closestPointOnCoords(coords, point):
+    smallestDist = float("inf")
+    linePoint = (0, 0)
+    closestA = 0
+    index = 0
+    for i in range(1, len(coords)):
+        newDist, newPoint, a = closestPointOnLine(coords[i - 1], coords[i], point)
+        if newDist < smallestDist:
+            smallestDist = newDist
+            linePoint = newPoint
+            closestA = a
+            index = i
+
+    dalt = coords[index]["alt"] - coords[index - 1]["alt"]
+    ddist = coords[index]["dist"] - coords[index - 1]["dist"]
+
+    return (
+        {
+            "easting": linePoint[0],
+            "northing": linePoint[1],
+            "dist": coords[index - 1]["dist"] + closestA * ddist,
+            "alt": coords[index - 1]["alt"] + closestA * dalt,
+            "relative": "Marker",
+        },
+        smallestDist,
+        index,
+    )
+
+
+def closestPointOnLine(l_begin, l_end, point):
+    x1, y1 = l_begin["easting"], l_begin["northing"]
+    x2, y2 = l_end["easting"], l_end["northing"]
+    x3, y3 = point["easting"], point["northing"]
+
+    dx, dy = x2 - x1, y2 - y1
+    det = dx * dx + dy * dy
+
+    a = (dy * (y3 - y1) + dx * (x3 - x1)) / det
+    b = (dy * (x3 - x1) + dx * (y1 - y3)) / det
+
+    dist = abs(b) * math.sqrt(det)
+
+    if a < 0:
+        a = 0
+        closestPoint = (x1, y1)
+        dist = distBetweenPoints(l_begin, point)
+    elif a > 0:
+        a = 1
+        closestPoint = (x2, y2)
+        dist = distBetweenPoints(l_end, point)
+    else:
+        closestPoint = (x1 + a * dx, y1 + a * dy)
+
+    return (dist, closestPoint, a)
+
+
+def distBetweenPoints(p1, p2):
+    return math.sqrt(
+        (p1["easting"] - p2["easting"]) ** 2 + (p1["northing"] - p2["northing"]) ** 2
+    )
+
+
+def getCurrentTimeString():
+    return str(round(time() * 1000))

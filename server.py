@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 import plotly.graph_objects as go
 import plotly
 from geo_admin_tools import *
+from db.db_utils import JSON_FILE_LOCATION
 
 app = Flask(__name__)
 
@@ -20,7 +21,7 @@ XLSX_FILE_LOCATION = "./files/xlsx/"
 
 @app.route("/")
 def index():
-    files = os.listdir(KML_FILE_LOCATION)
+    files = os.listdir(JSON_FILE_LOCATION)
     return render_template("index.html", files=files)
 
 
@@ -43,16 +44,15 @@ def upload_kml():
 
 @app.route("/edit_kml/<filename>")
 def edit_kml(filename):
-    root = getRoot(KML_FILE_LOCATION + filename + ".kml")
     data = getCoordinateData(filename)
     plots = createPlots(data["poi"], data["coords"])
-    markers = filterMarkersCloseToEdges(getSuppliedMarkers(root), data)
+
     return render_template(
         "edit_kml.html",
         plots=plots,
         filename=filename,
         poi=data["poi"],
-        suppliedMarkers=markers,
+        suppliedMarkers=data["markers"],
     )
 
 
