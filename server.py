@@ -62,12 +62,6 @@ def delete_kml(filename):
     return redirect(url_for("index"))
 
 
-@app.route("/generate_MZB/<filename>")
-def generate_MZB(filename):
-    generate(filename)
-    return redirect(url_for("edit_kml", filename=filename))
-
-
 @app.route("/download/<filename>")
 def download(filename):
     file_type = filename.split(".")[1]

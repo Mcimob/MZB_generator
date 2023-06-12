@@ -2,7 +2,7 @@ from functools import reduce
 import os
 import requests
 import math
-from time import time
+import time
 from pykml import parser
 from pykml.factory import nsmap, GX_ElementMaker as GX
 import openpyxl
@@ -39,30 +39,13 @@ def combineAndSave(file, filename):
     saveCoordinateData(filename.split("/")[-1].split(".")[0], data)
 
 
-def combine(file):
-    root = parser.parse(file).getroot()
-    pms = root.xpath(
-        ".//ns:Placemark[.//ns:LineString]", namespaces={"ns": nsmap[None]}
-    )
-    coords = connectLines(pms)
-    for el in root.Document.getchildren():
-        if not isinstance(el, lxml.objectify.StringElement):
-            element_type = next(
-                filter(lambda x: x.get("name") == "type", el.ExtendedData.getchildren())
-            ).value.text
-            if element_type in ["measure", "linepolygon"]:
-                root.Document.remove(el)
-    root.Document.append(createLine("measure_1", coords))
-
-    return root
-
-
 def createDataFromFile(file):
     root = parser.parse(file).getroot()
     coords = rootToDetailedCoords(root)
 
     changed = True
     while changed:
+        print(coords)
         changed = combineLines(coords)
 
     markers = getSuppliedMarkers(root, coords)
@@ -81,10 +64,9 @@ def combineLines(coords):
                 for c in value:
                     c["dist"] += v[-1]["dist"]
                 combinedLine = v[:] + value[1:]
-                print(value[0], v[-1], key, k)
                 del coords[key]
                 del coords[k]
-                coords[f"measure_generated_{str(round(time()*1000))}"] = combinedLine
+                coords[f"measure_generated_{getCurrentTimeString()}"] = combinedLine
 
                 return True
 
@@ -92,10 +74,9 @@ def combineLines(coords):
                 for c in v:
                     c["dist"] += value[-1]["dist"]
                 combinedLine = value[:] + v[1:]
-                print(value[-1], v[0], key, k)
                 del coords[key]
                 del coords[k]
-                coords[f"measure_generated_{str(round(time()*1000))}"] = combinedLine
+                coords[f"measure_generated_{getCurrentTimeString()}"] = combinedLine
 
                 return True
     return False
@@ -326,8 +307,10 @@ def insertMarkersToPOI(poi, start, end, markers):
     poi.append(end)
     for m in markers:
         for i, p in enumerate(poi):
-            if pointEquals(p, m) or p["dist"] == m["dist"]:
+            if pointEquals(p, m):
                 poi[i] = m
+                if i == 0:
+                    poi[-1]["name"] = m["name"]
                 break
             if p["dist"] > m["dist"]:
                 poi.insert(i, m)
@@ -346,17 +329,24 @@ def getSuppliedMarkers(root, coords):
         converter.WGS84toLV03(float(p[1]), float(p[0]), 0)[0:2] for p in markersTexts
     ]
     markersTitles = [p.name.text for p in markersRaw]
-    print(markersTitles)
 
+    return sortMarkersByLine(coords, markersCoords, markersTitles)
+
+
+def sortMarkersByLine(coords, markersCoords, markersTitles=None):
     out = {}
 
     for key, value in coords.items():
         out[key] = []
         for i, p in enumerate(markersCoords):
             point, dist, index = closestPointOnCoords(
-                value, {"easting": p[0], "northing": p[1]}
+                value,
+                {"easting": p[0], "northing": p[1]} if isinstance(p, tuple) else p,
             )
-            point["name"] = markersTitles[i]
+            if markersTitles:
+                point["name"] = markersTitles[i]
+            else:
+                point["name"] = p["name"]
 
             if dist > POINT_CLOSE_MARGIN:
                 continue
@@ -365,19 +355,6 @@ def getSuppliedMarkers(root, coords):
 
     for key, value in out.items():
         value.sort(key=lambda x: x["dist"])
-
-    return out
-
-
-def filterMarkersCloseToEdges(data):
-    markers = data["markers"]
-    coords = data["coords"]
-    out = {}
-    for key, value in data["coords"].items():
-        out[key] = []
-        for m in markers:
-            if not pointsClose(m, value[0]) and not pointsClose(m, value[-1]):
-                out[key].append(m)
 
     return out
 
@@ -402,34 +379,38 @@ def pointsClose(p1, p2):
 
 
 def breakLineAtPoint(fname, line_name, point):
-    root = getRoot(KML_FILE_LOCATION + fname + ".kml")
-    markers = getSuppliedMarkers(root)
-    if point not in [x["name"] for x in markers]:
-        return False
-    coords = list(filter(lambda x: x["name"] == point, markers))[0]
     data = getCoordinateData(fname)
+    markers = data["markers"][line_name]
+    print(markers)
+    if point not in [x["id"] for x in markers]:
+        return False
+    marker = list(filter(lambda x: x["id"] == point, markers))[0]
     line = data["coords"][line_name][:]
     closestIndex = 0
     closestDistance = float("inf")
     for i, p in enumerate(line):
-        new_dist = getPointDistance(
-            p["easting"], p["northing"], coords["easting"], coords["northing"]
-        )
+        new_dist = distBetweenPoints(p, marker)
         if new_dist < closestDistance:
             closestDistance = new_dist
             closestIndex = i
 
-    new_line_index = 0
-    print()
-    while "measure_" + str(new_line_index) + "_generated" in data["coords"].keys():
-        new_line_index += 1
     del data["coords"][line_name]
-    data["coords"][line_name] = line[: closestIndex + 1]
-    data["coords"][f"measure_{new_line_index}_generated"] = line[closestIndex:]
-    saveCoordinateData(fname, data)
-    generate(fname)
+    del data["poi"][line_name]
+    del data["markers"][line_name]
 
-    return
+    data["coords"][f"measure_generated_{getCurrentTimeString()}"] = line[
+        : closestIndex + 1
+    ]
+    newName = f"measure_generated_{getCurrentTimeString()}"
+    data["coords"][newName] = line[closestIndex + 1 :]
+
+    firstDist = line[0]["dist"]
+    for p in line:
+        p["dist"] -= firstDist
+
+    data["markers"] = sortMarkersByLine(data["coords"], markers)
+    data["poi"] = generatePOI(data["coords"], data["markers"])
+    saveCoordinateData(fname, data)
 
 
 def getPointDistance(px, py, qx, qy):
@@ -505,4 +486,5 @@ def distBetweenPoints(p1, p2):
 
 
 def getCurrentTimeString():
-    return str(round(time() * 1000))
+    time.sleep(0.002)
+    return str(round(time.time() * 1000))
