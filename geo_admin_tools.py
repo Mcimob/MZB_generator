@@ -404,8 +404,8 @@ def breakLineAtPoint(fname, line_name, point):
     newName = f"measure_generated_{getCurrentTimeString()}"
     data["coords"][newName] = line[closestIndex + 1 :]
 
-    firstDist = line[0]["dist"]
-    for p in line:
+    firstDist = data["coords"][newName][0]["dist"]
+    for p in data["coords"][newName]:
         p["dist"] -= firstDist
 
     data["markers"] = sortMarkersByLine(data["coords"], markers)
