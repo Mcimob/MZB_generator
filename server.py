@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 import plotly
 from geo_admin_tools import *
 from db.db_utils import JSON_FILE_LOCATION
+import tempfile
 
 app = Flask(__name__)
 
@@ -66,6 +67,15 @@ def delete_kml(filename):
 def download(filename):
     file_type = filename.split(".")[1]
     return send_file(f"./files/{file_type}/{filename}", as_attachment=True)
+
+
+@app.route("/download_kml/<fname>/<line_name>")
+def download_kml(fname, line_name):
+    tmp = tempfile.TemporaryFile()
+    content = generate_kml(fname, line_name)
+    tmp.write(content)
+    tmp.seek(0)
+    return send_file(tmp, as_attachment=True, download_name=f"{fname}_{line_name}.kml")
 
 
 @app.route("/break_kml", methods=["POST"])

@@ -36,10 +36,21 @@
         </select>
         <input type="submit" />
       </form>
-      <input class="spoilerbutton" type="button" value="Hide"
+      <input class="spoilerbutton" type="button" value="Show"
         onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
       <div class="spoiler">
         <div>
+          <p>{{item[0]['name']}} - {{item[-1]['name']}}</p>
+          <div>
+            <a href="/download_xlsx/{{filename}}/{{key}}">
+              <img src="/static/styles/images/xlsx-file-format-extension-svgrepo-com.svg" width="30" />
+            </a>
+            <a href="/download_kml/{{filename}}/{{key}}">
+              <img src="/static/styles/images/kml-file-format-interface-svgrepo-com.svg" width="30" />
+            </a>
+          </div>
+        </div>
+        <div class="spoilable">
           {% for p in item %}
           <p>{{p['id']}}, {{p['name']}}</p>
           {% endfor %}

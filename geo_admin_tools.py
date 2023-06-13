@@ -23,15 +23,16 @@ POINT_CLOSE_MARGIN = 50
 converter = GPSConverter()
 
 
-def generate(filename):
-    kml_fname = KML_FILE_LOCATION + filename + ".kml"
-    root = getRoot(kml_fname)
-    data = getCoordinateData(filename)
-    data["poi"] = generatePOI(data["coords"], root)
-    removeGenerated(root)
-    coordinateDataToFile(root, data)
-    saveKML(root, kml_fname, data)
-    return data
+def generate_kml(fname, line_name):
+    data = getCoordinateData(fname)
+    coords = data["coords"][line_name]
+    poi = data["poi"][line_name]
+
+    root = getBaseKML()
+
+    appendLineToRoot(root, coords, line_name)
+    appendPOIMarkers(root, poi)
+    return etree.tostring(root)
 
 
 def combineAndSave(file, filename):
@@ -45,7 +46,6 @@ def createDataFromFile(file):
 
     changed = True
     while changed:
-        print(coords)
         changed = combineLines(coords)
 
     markers = getSuppliedMarkers(root, coords)
@@ -109,17 +109,15 @@ def rootToDetailedCoords(root):
     return data
 
 
-def coordinateDataToFile(root, data):
-    for key, l in data["coords"].items():
-        line = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in l]
-        root.Document.append(createLine(key, line))
+def appendLineToRoot(root, coords, name):
+    line = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in coords]
+    root.Document.append(createLine(name, line))
 
-    for key, l in data["poi"].items():
-        poi = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in l]
-        for i, p in enumerate(poi):
-            root.Document.append(create_marker(i, l[i]["name"], p[1], p[0]))
 
-    return root
+def appendPOIMarkers(root, poi):
+    poi_conv = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in poi]
+    for i, p in enumerate(poi_conv):
+        root.Document.append(create_marker(i, poi[i]["name"], p[1], p[0]))
 
 
 def saveKML(root, filename, data):
@@ -129,8 +127,8 @@ def saveKML(root, filename, data):
     # New Excel files should be generated
 
 
-def getRoot(filename):
-    with open(filename, "rb") as f:
+def getBaseKML():
+    with open("files/kml/base.kml", "rb") as f:
         return parser.parse(f).getroot()
 
 
@@ -187,7 +185,7 @@ def createLine(id: str, coordinates: list[list[float]]):
             coordinate_string += " "
 
     placemark_string = f"""
-    <Placemark id="{id}_generated">
+    <Placemark id="{id}">
       <ExtendedData>
         <Data name="overlays"/>
         <Data name="type">
@@ -410,7 +408,6 @@ def pointsClose(p1, p2):
 def breakLineAtPoint(fname, line_name, point):
     data = getCoordinateData(fname)
     markers = data["markers"][line_name]
-    print(markers)
     if point not in [x["id"] for x in markers]:
         return False
     marker = list(filter(lambda x: x["id"] == point, markers))[0]
