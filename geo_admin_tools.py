@@ -333,6 +333,25 @@ def getSuppliedMarkers(root, coords):
     return sortMarkersByLine(coords, markersCoords, markersTitles)
 
 
+def resortMarkersByLine(
+    breakIndex: int, markers: list[dict]
+) -> tuple[list[dict], list[dict]]:
+    breakDistance = list(filter(lambda x: x["index"] == breakIndex, markers))[0]["dist"]
+    markers_1 = []
+    markers_2 = []
+    for m in markers:
+        if m["index"] >= breakIndex:
+            markers_2.append(m.copy())
+            markers_2[-1]["index"] -= breakIndex
+            markers_2[-1]["dist"] -= breakDistance
+            if m["index"] == breakIndex:
+                markers_1.append(m.copy())
+        else:
+            markers_1.append(m.copy())
+
+    return markers_1, markers_2
+
+
 def sortMarkersByLine(coords, markersCoords, markersTitles=None):
     out = {}
 
@@ -350,6 +369,16 @@ def sortMarkersByLine(coords, markersCoords, markersTitles=None):
 
             if dist > POINT_CLOSE_MARGIN:
                 continue
+
+            if pointEquals(point, value[index - 1]):
+                point["index"] = index - 1
+                value[index - 1] = point
+            else:
+                point["index"] = index
+                if pointEquals(point, value[index]):
+                    value[index] = point
+                else:
+                    value.insert(index, point)
 
             out[key].append(point)
 
@@ -385,30 +414,27 @@ def breakLineAtPoint(fname, line_name, point):
     if point not in [x["id"] for x in markers]:
         return False
     marker = list(filter(lambda x: x["id"] == point, markers))[0]
+    index = marker["index"]
     line = data["coords"][line_name][:]
-    closestIndex = 0
-    closestDistance = float("inf")
-    for i, p in enumerate(line):
-        new_dist = distBetweenPoints(p, marker)
-        if new_dist < closestDistance:
-            closestDistance = new_dist
-            closestIndex = i
 
     del data["coords"][line_name]
     del data["poi"][line_name]
     del data["markers"][line_name]
 
-    data["coords"][f"measure_generated_{getCurrentTimeString()}"] = line[
-        : closestIndex + 1
-    ]
-    newName = f"measure_generated_{getCurrentTimeString()}"
-    data["coords"][newName] = line[closestIndex + 1 :]
+    new_name_1 = f"measure_generated_{getCurrentTimeString()}"
+    data["coords"][new_name_1] = line[: index + 1]
 
-    firstDist = data["coords"][newName][0]["dist"]
-    for p in data["coords"][newName]:
+    new_name_2 = f"measure_generated_{getCurrentTimeString()}"
+    data["coords"][new_name_2] = line[index + 1 :]
+    data["coords"][new_name_2].insert(0, line[index].copy())
+
+    firstDist = data["coords"][new_name_2][0]["dist"]
+    for p in data["coords"][new_name_2]:
         p["dist"] -= firstDist
 
-    data["markers"] = sortMarkersByLine(data["coords"], markers)
+    data["markers"][new_name_1], data["markers"][new_name_2] = resortMarkersByLine(
+        index, markers
+    )
     data["poi"] = generatePOI(data["coords"], data["markers"])
     saveCoordinateData(fname, data)
 
@@ -424,6 +450,11 @@ def removeRecord(name):
 
 
 def closestPointOnCoords(coords, point):
+    """
+    Returns a point dictionary,
+    distance to closest point on the line,
+    the index of the point which ends the line, the point is closest to (point is between index - 1 and index)
+    """
     smallestDist = float("inf")
     linePoint = (0, 0)
     closestA = 0
