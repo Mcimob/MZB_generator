@@ -1,6 +1,5 @@
 .venv/
 .vscode/
-files/
 __pycache__/
 instance/
 db/json/

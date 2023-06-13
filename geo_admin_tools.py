@@ -1,13 +1,12 @@
 from functools import reduce
 import os
-import requests
 import math
 import time
+import requests
 from pykml import parser
-from pykml.factory import nsmap, GX_ElementMaker as GX
+from pykml.factory import GX_ElementMaker as GX
 import openpyxl
 from lxml import etree
-import lxml
 from wgs84_ch1903 import GPSConverter
 from db.db_utils import (
     saveCoordinateData,
@@ -33,6 +32,21 @@ def generate_kml(fname, line_name):
     appendLineToRoot(root, coords, line_name)
     appendPOIMarkers(root, poi)
     return etree.tostring(root)
+
+
+def generate_xlsx(fname, line_name):
+    poi = getCoordinateData(fname)["poi"][line_name]
+    book = openpyxl.load_workbook("files/xlsx/base.xlsx")
+    sheet = book["leer"]
+
+    for i, p in enumerate(poi):
+        sheet[f"A{i+8}"] = p["name"]
+        sheet[f"C{i+8}"] = p["alt"]
+
+        if i != 0:
+            sheet[f"E{i+8}"] = (p["dist"] - poi[i - 1]["dist"]) / 1000
+
+    return book
 
 
 def combineAndSave(file, filename):
@@ -384,20 +398,6 @@ def sortMarkersByLine(coords, markersCoords, markersTitles=None):
         value.sort(key=lambda x: x["dist"])
 
     return out
-
-
-def writeToExcel(poi, filename):
-    book = openpyxl.load_workbook("MZB_template.xlsx")
-    sheet = book["leer"]
-
-    for i, p in enumerate(poi):
-        sheet[f"A{i+8}"] = f"Point {i+1}"
-        sheet[f"C{i+8}"] = p["alt"]
-
-        if i != 0:
-            sheet[f"E{i+8}"] = (p["dist"] - poi[i - 1]["dist"]) / 1000
-
-    book.save(filename)
 
 
 def pointsClose(p1, p2):

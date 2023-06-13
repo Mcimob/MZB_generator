@@ -63,12 +63,6 @@ def delete_kml(filename):
     return redirect(url_for("index"))
 
 
-@app.route("/download/<filename>")
-def download(filename):
-    file_type = filename.split(".")[1]
-    return send_file(f"./files/{file_type}/{filename}", as_attachment=True)
-
-
 @app.route("/download_kml/<fname>/<line_name>")
 def download_kml(fname, line_name):
     tmp = tempfile.TemporaryFile()
@@ -76,6 +70,15 @@ def download_kml(fname, line_name):
     tmp.write(content)
     tmp.seek(0)
     return send_file(tmp, as_attachment=True, download_name=f"{fname}_{line_name}.kml")
+
+
+@app.route("/download_xlsx/<fname>/<line_name>")
+def download_xlsx(fname, line_name):
+    tmp = tempfile.NamedTemporaryFile(suffix=".xlsx")
+    book = generate_xlsx(fname, line_name)
+    book.save(tmp)
+    tmp.seek(0)
+    return send_file(tmp, as_attachment=True, download_name=f"{fname}_{line_name}.xlsx")
 
 
 @app.route("/break_kml", methods=["POST"])
