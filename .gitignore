@@ -1,8 +1,7 @@
 .venv/
 .vscode/
 __pycache__/
-instance/
-db/json/
+code/db/json/
 *.kml
 *.xlsx
 !code/files/kml/base.kml
