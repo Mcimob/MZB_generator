@@ -268,7 +268,8 @@ def getRightAlts(coords):
 
 def generatePOI(coords, markers):
     out = {}
-    for key, item in coords.items():
+    for key, item_ in coords.items():
+        item = item_.copy()
         for i, c in enumerate(item):
             c["relative"] = (
                 "Start"
@@ -321,7 +322,7 @@ def insertMarkersToPOI(poi, start, end, markers):
         for i, p in enumerate(poi):
             if pointEquals(p, m):
                 poi[i] = m
-                if i == 0:
+                if i == 0 and pointEquals(p, poi[-1]):
                     poi[-1]["name"] = m["name"]
                 break
             if p["dist"] > m["dist"]:
@@ -392,7 +393,7 @@ def sortMarkersByLine(coords, markersCoords, markersTitles=None):
                 else:
                     value.insert(index, point)
 
-            out[key].append(point)
+            out[key].append(point.copy())
 
     for key, value in out.items():
         value.sort(key=lambda x: x["dist"])
