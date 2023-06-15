@@ -5,5 +5,5 @@ instance/
 db/json/
 *.kml
 *.xlsx
-!files/kml/base.kml
-!files/xlsx/base.xlsx
+!code/files/kml/base.kml
+!code/files/xlsx/base.xlsx
