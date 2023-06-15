@@ -54,6 +54,7 @@ def edit_kml(filename):
         filename=filename,
         poi=data["poi"],
         suppliedMarkers=data["markers"],
+        center=getCenterCoords(data["coords"]),
     )
 
 

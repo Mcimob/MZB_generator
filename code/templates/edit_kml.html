@@ -23,7 +23,8 @@
     <![endif]-->
   <h1>Configure the current <code>.kml</code> file</h1>
   <div class="editLineContainer">
-    {% for key, item in poi.items()%}
+    {% for key, item in poi.items() %}
+    <iframe src='https://map.geo.admin.ch/embed.html?layers=KML%7C%7Chttp:%2F%2Fpublic.pfaditools.ch%2Fdownload_kml%2F{{filename}}%2F{{key}}&E={{center[key][1]}}&N={{center[key][0]}}&zoom=4' width='400' height='300' frameborder='0' style='border:0' allow='geolocation'></iframe>
     <div>
       {{plots[key] | safe}}<label for="breakers">Choose Breakpoint:</label>
       <form id="breakpoint_{{key}}" action="/break_kml" method="post">

@@ -517,3 +517,21 @@ def distBetweenPoints(p1, p2):
 def getCurrentTimeString():
     time.sleep(0.002)
     return str(round(time.time() * 1000))
+
+
+def getCenterCoords(coords):
+    out = {}
+    for key, value in coords.items():
+        top = 0
+        bottom = float("inf")
+        right = 0
+        left = float("inf")
+
+        for c in value:
+            top = max(top, c["northing"])
+            bottom = min(bottom, c["northing"])
+            right = max(right, c["easting"])
+            left = min(left, c["easting"])
+        out[key] = ((top + bottom) / 2, (left + right) / 2)
+
+    return out
