@@ -1,25 +1,6 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>MZB Generator</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/styles/styles.css">
-</head>
-
-<body>
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+{% extends "base.html" %}
+{% block title%}MZB Generator {% endblock %}
+{% block content%}
   <div class="page_container">
     <h1>
       Willkommen beim MZB Generator!
@@ -33,8 +14,8 @@
     </p>
     <form enctype="multipart/form-data" action="/upload" method="post">
       <input type="file" name="file" style="display:none" id="file_input" />
-      <input type="button" value="Datei auswählen" onclick="document.getElementById('file_input').click()" />
-      <input type="submit" value="Ausgewählte Datei hochladen" />
+      <input class="big_button" type="button" value="Datei auswählen" onclick="document.getElementById('file_input').click()" />
+      <input class="big_button" type="submit" value="Ausgewählte Datei hochladen" />
       {% for file in files %}
       <div class="overviewItem">
         <p style="margin: 0">{{file.split('.')[0]}}</p>
@@ -50,6 +31,4 @@
       {% endfor %}
     </form>
   </div>
-</body>
-
-</html>
+{% endblock %}

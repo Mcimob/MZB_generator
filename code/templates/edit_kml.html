@@ -1,26 +1,16 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<script>
+  function showSaveButton(key) {
+    document.getElementById("save_" + key).style = "";
+  }
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Edit MZB</title>
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="/static/styles/styles.css">
+</script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-</head>
-
-<body>
-  <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+{% endblock %}
+{% block title%}Edit KML{% endblock %}
+{% block content %}
   <h1>Configure the current <code>.kml</code> file</h1>
   <div class="editLineContainer">
     {% for key, item in poi.items() %}
@@ -36,14 +26,14 @@
         <form id="breakpoint_{{key}}" action="/break_kml" method="post">
           <input type="hidden" value="{{filename}}" name="filename" />
           <input type="hidden" value="{{key}}" name="linesegment" />
-          <select name="breaker" id="breaker">
+          <select name="breaker" id="breaker" class="big_button">
             {% for p in suppliedMarkers[key] %}
             <option value="{{p['id']}}">{{p['name']}}</option>
             {% endfor %}
           </select>
-          <input type="submit" />
+          <input type="submit" class="big_button"/>
         </form>
-        <input class="spoilerbutton" type="button" value="Show"
+        <input class="spoilerbutton big_button" type="button" value="Hide"
           onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
         <div class="spoiler">
           <div class="row between">
@@ -76,7 +66,7 @@
                 </tr>
                 {% endfor %}
               </table>
-              <input type="submit" value="Namen aktualisieren" style="display:none" id="save_{{key}}" />
+              <input class="big_button" type="submit" value="Namen aktualisieren" style="display:none" id="save_{{key}}" />
             </form>
           </div>
         </div>
@@ -85,13 +75,4 @@
     {% endfor %}
 
   </div>
-
-</body>
-<script>
-  function showSaveButton(key) {
-    document.getElementById("save_" + key).style = "";
-  }
-
-</script>
-
-</html>
+  {% endblock %}

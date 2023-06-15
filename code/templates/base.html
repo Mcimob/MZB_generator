@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    {% block head %}
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>{% block title%}{% endblock %}</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet" href="/static/styles/styles.css" />
+    <link rel="stylesheet" href="/static/styles/theme_toggle.css" />
+    <script src="/static/scripts/theme_toggle.js"></script>
+    {% endblock %}
+  </head>
+
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your experience.
+      </p>
+    <![endif]-->
+    <button title="Toggles light &amp; dark" aria-label="light" aria-live="polite" class="theme-toggle"
+    id="theme-toggle"><svg viewBox="0 0 24 24" aria-hidden="true" class="sun-and-moon" height="24" width="24">
+      <mask class="moon" id="moon-mask">
+        <rect fill="white" height="100%" width="100%" x="0" y="0"></rect>
+        <circle cx="24" cy="10" fill="black" r="6"></circle>
+      </mask>
+      <circle class="sun" cx="12" cy="12" fill="currentColor" mask="url(#moon-mask)" r="6"></circle>
+      <g class="sun-beams" stroke="currentColor">
+        <line x1="12" x2="12" y1="1" y2="3"></line>
+        <line x1="12" x2="12" y1="21" y2="23"></line>
+        <line x1="4.22" x2="5.64" y1="4.22" y2="5.64"></line>
+        <line x1="18.36" x2="19.78" y1="18.36" y2="19.78"></line>
+        <line x1="1" x2="3" y1="12" y2="12"></line>
+        <line x1="21" x2="23" y1="12" y2="12"></line>
+        <line x1="4.22" x2="5.64" y1="19.78" y2="18.36"></line>
+        <line x1="18.36" x2="19.78" y1="5.64" y2="4.22"></line>
+      </g>
+    </svg></button>
+    {% block content%}
+    {% endblock %}
+  </body>
+</html>
