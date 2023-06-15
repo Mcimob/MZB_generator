@@ -517,3 +517,16 @@ def getCenterCoords(coords):
         out[key] = ((top + bottom) / 2, (left + right) / 2)
 
     return out
+
+
+def updatePoiNames(form):
+    fname = form["filename"]
+    line_segment = form["linesegment"]
+
+    data = getCoordinateData(fname)
+
+    for key, name in form.items():
+        if key.startswith("name"):
+            index = int(key.split("_")[1]) - 1
+            data["poi"][line_segment][index]["name"] = name
+    saveCoordinateData(fname, data)

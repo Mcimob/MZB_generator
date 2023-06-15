@@ -91,6 +91,16 @@ def break_kml():
     return redirect(url_for("edit_kml", filename=fname))
 
 
+@app.route("/update_poi_names", methods={"POST"})
+def update_poi_names():
+    form = request.form
+    fname = form["filename"]
+    updatePoiNames(form)
+    print(form)
+
+    return redirect(url_for("edit_kml", filename=fname))
+
+
 def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() == "kml"
 
