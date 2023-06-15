@@ -18,13 +18,18 @@ body {
 }
 
 .editLineContainer {
-  display: grid;
-  grid-template-columns: auto auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .spoiler {
   overflow: hidden;
   background-color: bisque;
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px;
 }
 
 .spoiler>div {
@@ -38,5 +43,33 @@ body {
 }
 
 .spoilerbutton[value="Hide"]+.spoiler>.spoilable {
-  max-height: 600px;
+  max-height: 1000px;
+}
+
+.page_container {
+  max-width: 800px;
+}
+
+.editing_item {
+  padding: 20px;
+  margin: 20px;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 20px;
+  border-color: black;
+}
+
+.map_and_graph {
+  display: flex;
+  flex-direction: row;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.between {
+  justify-content: space-between;
+  align-items: center;
 }

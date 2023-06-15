@@ -98,13 +98,29 @@ def allowed_file(filename):
 def createPlots(poi, coords):
     out = {}
     for key, item in coords.items():
-        fig1 = go.Scatter(
-            x=[p["dist"] for p in poi[key]], y=[p["alt"] for p in poi[key]]
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=[p["dist"] for p in poi[key]],
+                y=[p["alt"] for p in poi[key]],
+                hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
+                name="MZB",
+            )
         )
-        fig2 = go.Scatter(x=[p["dist"] for p in item], y=[p["alt"] for p in item])
-        out[key] = plotly.offline.plot(
-            [fig1, fig2], include_plotlyjs=False, output_type="div"
+        fig.add_trace(
+            go.Scatter(
+                x=[p["dist"] for p in item],
+                y=[p["alt"] for p in item],
+                hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
+                name="Profil",
+            )
         )
+
+        fig.update_layout(
+            xaxis_title="Distanz (m)", yaxis_title="Höhe (m)", title_text="", width=400
+        )
+
+        out[key] = plotly.offline.plot(fig, include_plotlyjs=False, output_type="div")
 
     return out
 

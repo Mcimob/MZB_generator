@@ -20,14 +20,21 @@
   <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-  <div>
+  <div class="page_container">
     <h1>
       Willkommen beim MZB Generator!
     </h1>
-    <p>Lade eine <code>.kml</code> Datei hoch, um dazu eine MZB zu generieren.</p>
+    <p>
+      Hier kannst du eine <code>.kml</code> Datei hochladen. Falls die Route aus mehreren Stücken besteht, werden die
+      Stücke automatisch verbunden.
+      Danach kannst du die Route bei den von dir gesetzten Markierungen auseinanderbrechen.
+      Für jedes Stück kannst du dann eine neue <code>.kml</code> Datei, sowie die dazugehörige Marschzeitberechnung
+      herunterladen.
+    </p>
     <form enctype="multipart/form-data" action="/upload" method="post">
-      <input type="file" name="file">
-      <input type="submit">
+      <input type="file" name="file" style="display:none" id="file_input" />
+      <input type="button" value="Datei auswählen" onclick="document.getElementById('file_input').click()" />
+      <input type="submit" value="Ausgewählte Datei hochladen" />
       {% for file in files %}
       <div class="overviewItem">
         <p style="margin: 0">{{file.split('.')[0]}}</p>

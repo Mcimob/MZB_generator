@@ -24,37 +24,61 @@
   <h1>Configure the current <code>.kml</code> file</h1>
   <div class="editLineContainer">
     {% for key, item in poi.items() %}
-    <iframe src='https://map.geo.admin.ch/embed.html?layers=KML%7C%7Chttp:%2F%2Fpublic.pfaditools.ch%2Fdownload_kml%2F{{filename}}%2F{{key}}&E={{center[key][1]}}&N={{center[key][0]}}&zoom=4' width='400' height='300' frameborder='0' style='border:0' allow='geolocation'></iframe>
-    <div>
-      {{plots[key] | safe}}<label for="breakers">Choose Breakpoint:</label>
-      <form id="breakpoint_{{key}}" action="/break_kml" method="post">
-        <input type="hidden" value="{{filename}}" name="filename" />
-        <input type="hidden" value="{{key}}" name="linesegment" />
-        <select name="breaker" id="breaker">
-          {% for p in suppliedMarkers[key] %}
-          <option value="{{p['id']}}">{{p['name']}}</option>
-          {% endfor %}
-        </select>
-        <input type="submit" />
-      </form>
-      <input class="spoilerbutton" type="button" value="Show"
-        onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
-      <div class="spoiler">
-        <div>
-          <p>{{item[0]['name']}} - {{item[-1]['name']}}</p>
-          <div>
-            <a href="/download_xlsx/{{filename}}/{{key}}">
-              <img src="/static/styles/images/xlsx-file-format-extension-svgrepo-com.svg" width="30" />
-            </a>
-            <a href="/download_kml/{{filename}}/{{key}}">
-              <img src="/static/styles/images/kml-file-format-interface-svgrepo-com.svg" width="30" />
-            </a>
+    <div class="editing_item">
+      <div class="map_and_graph">
+        <iframe
+          src='https://map.geo.admin.ch/embed.html?layers=KML%7C%7Chttp:%2F%2Fpublic.pfaditools.ch%2Fdownload_kml%2F{{filename}}%2F{{key}}&E={{center[key][1]}}&N={{center[key][0]}}&zoom=4'
+          width='400' height='300' frameborder='0' style='border:0' allow='geolocation'></iframe>
+        {{plots[key] | safe}}
+      </div>
+      <div>
+        <label for="breakers">Choose Breakpoint:</label>
+        <form id="breakpoint_{{key}}" action="/break_kml" method="post">
+          <input type="hidden" value="{{filename}}" name="filename" />
+          <input type="hidden" value="{{key}}" name="linesegment" />
+          <select name="breaker" id="breaker">
+            {% for p in suppliedMarkers[key] %}
+            <option value="{{p['id']}}">{{p['name']}}</option>
+            {% endfor %}
+          </select>
+          <input type="submit" />
+        </form>
+        <input class="spoilerbutton" type="button" value="Hide"
+          onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
+        <div class="spoiler">
+          <div class="row between">
+            <h3>{{item[0]['name']}} - {{item[-1]['name']}}</h3>
+            <div>
+              <a href="/download_xlsx/{{filename}}/{{key}}">
+                <img src="/static/styles/images/xlsx-file-format-extension-svgrepo-com.svg" width="30" />
+              </a>
+              <a href="/download_kml/{{filename}}/{{key}}">
+                <img src="/static/styles/images/kml-file-format-interface-svgrepo-com.svg" width="30" />
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="spoilable">
-          {% for p in item %}
-          <p>{{p['id']}}, {{p['name']}}</p>
-          {% endfor %}
+          <div class="spoilable">
+            <form method="post" action="/update_poi_names">
+              <input type="hidden" value="{{filename}}" name="filename" />
+              <input type="hidden" value="{{key}}" name="linesegment" />
+              <table class="table">
+                <tr>
+                  <th>Name</th>
+                  <th>Höhe</th>
+                  <th>Summe Distanz</th>
+                </tr>
+                {% for p in item %}
+                <tr>
+                  <td><input type="text" value="{{p['name']}}" oninput="showSaveButton('{{key}}')"
+                      name="name_{{loop.index}}" /></td>
+                  <td>{{p['alt']}} m</td>
+                  <td>{{(p['dist'] / 1000) | round(2)}} km</td>
+                </tr>
+                {% endfor %}
+              </table>
+              <input type="submit" value="Namen aktualisieren" style="display:none" id="save_{{key}}" />
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -63,5 +87,11 @@
   </div>
 
 </body>
+<script>
+  function showSaveButton(key) {
+    document.getElementById("save_" + key).style = "";
+  }
+
+</script>
 
 </html>
