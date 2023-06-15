@@ -225,24 +225,6 @@ def createLine(id: str, coordinates: list[list[float]]):
     return parser.fromstring(placemark_string)
 
 
-def addMarkers(root, poi):
-    for key, item in poi.items():
-        for index, p in enumerate(item):
-            north, east, alt = converter.LV03toWGS84(p["easting"], p["northing"], 0)
-            marker = create_marker(index, p["name"], east, north)
-            root.Document.append(marker)
-    return root
-
-
-def connectLines(lineStrings):
-    # TODO: Fix Doubling of edge vertices
-    lines = []
-    for line in lineStrings:
-        coords = parseLineString(line)
-        lines.append(coords)
-    return reduce(lambda a, b: a + b, lines)
-
-
 def parseLineString(placemark):
     return [
         (float(xy.split(",")[1]), float(xy.split(",")[0]))
