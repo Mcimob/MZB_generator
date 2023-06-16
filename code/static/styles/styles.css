@@ -1,17 +1,18 @@
 html {
+  --hue: 200;
   --text-color: black;
-  --border-color: #125e94;
-  --bg-color: white;
-  --alt-bg-color: bisque;
+  --border-color: hsl(var(--hue), 95%, 23%);
+  --bg-color: hsl(var(--hue), 95%, 90%);
+  --alt-bg-color: hsl(var(--hue), 95%, 75%);
   --is-default-mode: 1;
   --border-radius-big: 20px;
 }
 
 html[data-theme='dark'] {
   --text-color: white;
-  --border-color: #27e6c9;
-  --bg-color: #111;
-  --alt-bg-color: #024d5c;
+  --border-color: hsl(var(--hue), 95%, 75%);
+  --bg-color: hsl(var(--hue), 95%, 10%);
+  --alt-bg-color: hsl(var(--hue), 95%, 30%);
   --is-default-mode: 0;
 }
 
