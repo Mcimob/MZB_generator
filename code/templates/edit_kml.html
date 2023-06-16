@@ -4,14 +4,15 @@
 <script>
   function showSaveButton(key) {
     document.getElementById("save_" + key).style = "";
+    document.getElementById("save_" + key + "_text").style = "";
   }
 
 </script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 {% endblock %}
-{% block title%}Edit KML{% endblock %}
+{% block title%}KML bearbeiten{% endblock %}
 {% block content %}
-  <h1>Configure the current <code>.kml</code> file</h1>
+  <h1>Bearbeite <code>{{filename}}.kml</code></h1>
   <div class="editLineContainer">
     {% for key, item in poi.items() %}
     <div class="editing_item">
@@ -29,7 +30,7 @@
         </div>
       </div>
       <div>
-        <label for="breakers">Choose Breakpoint:</label>
+        <label for="breakers">Wähle eine Stelle für einen Unterbruch:</label>
         <form id="breakpoint_{{key}}" action="/break_kml" method="post">
           <input type="hidden" value="{{filename}}" name="filename" />
           <input type="hidden" value="{{key}}" name="linesegment" />
@@ -40,10 +41,10 @@
               {% endif %}
             {% endfor %}
           </select>
-          <input type="submit" class="big_button"/>
+          <input type="submit" class="big_button" value="Absenden"/>
         </form>
-        <input class="spoilerbutton big_button" type="button" value="Show"
-          onclick="this.value = this.value == 'Hide' ? 'Show' : 'Hide'" />
+        <input class="spoilerbutton big_button" type="button" value="Details Anzeigen"
+          onclick="this.value = this.value == 'Details Verstecken' ? 'Details Anzeigen' : 'Details Verstecken'" />
         <div class="spoiler">
           <div class="row between">
             <h3>{{item[0]['name']}} - {{item[-1]['name']}}</h3>
@@ -77,7 +78,10 @@
                 </tr>
                 {% endfor %}
               </table>
-              <input class="big_button" type="submit" value="Namen aktualisieren" style="display:none" id="save_{{key}}" />
+              <div class="row between fullwidth">
+                <input class="big_button" type="submit" value="Punkte aktualisieren" style="display:none" id="save_{{key}}" />
+                <p style="display:none" id="save_{{key}}_text"><b>Achtung</b>: Du musst speichern, damit deine Änderungen effektiv sind!</p>
+              </div>
             </form>
           </div>
         </div>

@@ -59,6 +59,9 @@ body {
   border-radius: var(--border-radius-big);
   padding: 10px;
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .spoiler>div {
@@ -67,12 +70,16 @@ body {
   transition: all 1s ease;
 }
 
-.spoilerbutton[value="Show"]+.spoiler>.spoilable {
+.spoilerbutton[value="Details Anzeigen"]+.spoiler>.spoilable {
   max-height: 0px;
 }
 
-.spoilerbutton[value="Hide"]+.spoiler>.spoilable {
+.spoilerbutton[value="Details Verstecken"]+.spoiler>.spoilable {
   max-height: 1000px;
+}
+
+.spoilable {
+  width: 100%;
 }
 
 .poi_form {
@@ -97,11 +104,13 @@ body {
 .map_and_graph {
   display: flex;
   flex-direction: row;
+  margin: 20px;
 }
 
 .row {
   display: flex;
   flex-direction: row;
+  width: 90%;
 }
 
 .between {
