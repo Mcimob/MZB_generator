@@ -6,6 +6,8 @@ html {
   --alt-bg-color: hsl(var(--hue), 95%, 75%);
   --is-default-mode: 1;
   --border-radius-big: 20px;
+  --icon-fill: hsl(210 10% 30%);
+  --icon-fill-hover: hsl(210 10% 15%);
 }
 
 html[data-theme='dark'] {
@@ -14,6 +16,8 @@ html[data-theme='dark'] {
   --bg-color: hsl(var(--hue), 95%, 10%);
   --alt-bg-color: hsl(var(--hue), 95%, 30%);
   --is-default-mode: 0;
+  --icon-fill: hsl(210 10% 70%);
+  --icon-fill-hover: hsl(210 15% 90%)
 }
 
 body {
@@ -196,4 +200,21 @@ input[type="text"] {
 
 .poi_table tr:first-child th:last-child {
   border-top-right-radius: var(--border-radius-big);
+}
+
+.home_button {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  
+}
+
+.home_button svg {
+  fill: var(--icon-fill);
+  width: 24px;
+  height: 24px;
+}
+
+.home_button svg:hover {
+  fill: var(--icon-fill-hover);
 }
