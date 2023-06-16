@@ -4,6 +4,7 @@ html {
   --bg-color: white;
   --alt-bg-color: bisque;
   --is-default-mode: 1;
+  --border-radius-big: 20px;
 }
 
 html[data-theme='dark'] {
@@ -31,7 +32,7 @@ body {
   border-style: solid;
   border-width: 2px;
   border-color: var(--border-color);
-  border-radius: 20px;
+  border-radius: var(--border-radius-big);
   padding: 10px;
   margin: 10px;
   display: flex;
@@ -50,7 +51,7 @@ body {
 .spoiler {
   overflow: hidden;
   background-color: var(--alt-bg-color);
-  border-radius: 20px;
+  border-radius: var(--border-radius-big);
   padding: 10px;
   margin: 10px;
 }
@@ -69,6 +70,12 @@ body {
   max-height: 1000px;
 }
 
+.poi_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .page_container {
   max-width: 800px;
 }
@@ -78,7 +85,7 @@ body {
   margin: 20px;
   border-style: solid;
   border-width: 2px;
-  border-radius: 20px;
+  border-radius: var(--border-radius-big);
   border-color: var(--border-color);
 }
 
@@ -150,4 +157,42 @@ input[type="text"] {
 .dark_graph {
   opacity: calc((1 - var(--is-default-mode)) * 100%);
   z-index: calc(1 - var(--is-default-mode));
+}
+
+.poi_table {
+  width: 90%;
+  border-spacing: 0;
+  margin: 10px;
+}
+
+.poi_table td, .poi_table th {
+  text-align: center;
+  border-bottom: 2px solid var(--border-color);
+  border-right: 2px solid var(--border-color);
+  padding: 10px;
+}
+
+.poi_table th:first-child, .poi_table td:first-child {
+  border-left: 2px solid var(--border-color);
+}
+
+.poi_table tr:first-child th {
+  border-top: 2px solid var(--border-color);
+}
+
+.poi_table tr:last-child td:first-child {
+  border-bottom-left-radius: var(--border-radius-big);
+}
+
+  
+.poi_table tr:last-child td:last-child {
+  border-bottom-right-radius: var(--border-radius-big);
+}
+
+.poi_table tr:first-child th:first-child {
+  border-top-left-radius: var(--border-radius-big);
+}
+
+.poi_table tr:first-child th:last-child {
+  border-top-right-radius: var(--border-radius-big);
 }
