@@ -135,6 +135,8 @@ def createPlots(poi, coords):
                 template=template,
                 width=400,
                 height=300,
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
             )
 
             out[key].append(
