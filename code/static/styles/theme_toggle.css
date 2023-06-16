@@ -95,7 +95,7 @@
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   outline-offset: 5px;
-  position: absolute;
+  position: fixed;
   right: 10px;
   top: 10px;
 }
@@ -115,21 +115,4 @@
   .theme-toggle {
     --size: 48px
   }
-}
-
-body {
-  min-block-size: 100%;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-  display: grid;
-  align-content: center;
-  justify-content: center;
-  place-content: center
-}
-
-html.color-theme-in-transition,
-html.color-theme-in-transition *,
-html.color-theme-in-transition *:before,
-html.color-theme-in-transition *:after {
-  transition: all 750ms !important;
-  transition-delay: 0 !important;
 }
