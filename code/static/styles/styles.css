@@ -3,6 +3,7 @@ html {
   --border-color: #125e94;
   --bg-color: white;
   --alt-bg-color: bisque;
+  --is-default-mode: 1;
 }
 
 html[data-theme='dark'] {
@@ -10,6 +11,7 @@ html[data-theme='dark'] {
   --border-color: #27e6c9;
   --bg-color: #111;
   --alt-bg-color: #024d5c;
+  --is-default-mode: 0;
 }
 
 body {
@@ -129,4 +131,23 @@ input[type="text"] {
   border-width: 1px;
   border-color: var(--border-color);
   color: var(--text-color);
+}
+
+.graph_container {
+  width: 400px;
+  height: 300px;
+}
+
+.graph_container > div {
+  position: absolute;
+}
+
+.default_graph {
+  opacity: calc(var(--is-default-mode) * 100%);
+  z-index: var(--is-default-mode);
+}
+
+.dark_graph {
+  opacity: calc((1 - var(--is-default-mode)) * 100%);
+  z-index: calc(1 - var(--is-default-mode));
 }

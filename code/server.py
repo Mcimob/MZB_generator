@@ -108,29 +108,38 @@ def allowed_file(filename):
 def createPlots(poi, coords):
     out = {}
     for key, item in coords.items():
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=[p["dist"] for p in poi[key]],
-                y=[p["alt"] for p in poi[key]],
-                hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
-                name="MZB",
+        out[key] = []
+        for template in ["plotly", "plotly_dark"]:
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=[p["dist"] for p in poi[key]],
+                    y=[p["alt"] for p in poi[key]],
+                    hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
+                    name="MZB",
+                )
             )
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=[p["dist"] for p in item],
-                y=[p["alt"] for p in item],
-                hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
-                name="Profil",
+            fig.add_trace(
+                go.Scatter(
+                    x=[p["dist"] for p in item],
+                    y=[p["alt"] for p in item],
+                    hovertemplate="Distanz: %{x} m, Höhe: %{y} m",
+                    name="Profil",
+                )
             )
-        )
 
-        fig.update_layout(
-            xaxis_title="Distanz (m)", yaxis_title="Höhe (m)", title_text="", width=400
-        )
+            fig.update_layout(
+                xaxis_title="Distanz (m)",
+                yaxis_title="Höhe (m)",
+                title_text="",
+                template=template,
+                width=400,
+                height=300,
+            )
 
-        out[key] = plotly.offline.plot(fig, include_plotlyjs=False, output_type="div")
+            out[key].append(
+                plotly.offline.plot(fig, include_plotlyjs=False, output_type="div")
+            )
 
     return out
 
