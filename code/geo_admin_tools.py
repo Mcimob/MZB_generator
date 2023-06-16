@@ -129,9 +129,13 @@ def appendLineToRoot(root, coords, name):
 
 
 def appendPOIMarkers(root, poi):
-    poi_conv = [converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] for p in poi]
+    poi_conv = [
+        converter.LV03toWGS84(p["easting"], p["northing"], 0)[0:2] + (p["name"],)
+        for p in poi
+        if p["display"]
+    ]
     for i, p in enumerate(poi_conv):
-        root.Document.append(create_marker(i, poi[i]["name"], p[1], p[0]))
+        root.Document.append(create_marker(i, p[2], p[1], p[0]))
 
 
 def saveKML(root, filename, data):
@@ -287,12 +291,17 @@ def generatePOI(coords, markers):
                 over = True
                 margin += 5
                 poi = []
+
         insertMarkersToPOI(poi, poi_tmp[0], poi_tmp[-1], markers[key])
 
         for i, p in enumerate(poi):
             p["id"] = f"marker_{getCurrentTimeString()}"
             if "name" not in p.keys():
                 p["name"] = p["relative"]
+            if p["relative"] == "Marker" or i == 0 or i == len(poi) - 1:
+                p["display"] = True
+            else:
+                p["display"] = False
         out[key] = poi
     return out
 
@@ -529,4 +538,18 @@ def updatePoiNames(form):
         if key.startswith("name"):
             index = int(key.split("_")[1]) - 1
             data["poi"][line_segment][index]["name"] = name
+    saveCoordinateData(fname, data)
+
+
+def updatePoiDisplay(form):
+    fname = form["filename"]
+    line_segment = form["linesegment"]
+
+    data = getCoordinateData(fname)
+
+    for i, p in enumerate(data["poi"][line_segment]):
+        if f"show_{i+1}" in form.keys():
+            p["display"] = True
+        else:
+            p["display"] = False
     saveCoordinateData(fname, data)

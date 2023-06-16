@@ -90,12 +90,12 @@ def break_kml():
     return redirect(url_for("edit_kml", filename=fname))
 
 
-@app.route("/update_poi_names", methods={"POST"})
-def update_poi_names():
+@app.route("/update_poi", methods={"POST"})
+def update_poi():
     form = request.form
     fname = form["filename"]
     updatePoiNames(form)
-    print(form)
+    updatePoiDisplay(form)
 
     return redirect(url_for("edit_kml", filename=fname))
 
