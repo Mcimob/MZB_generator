@@ -34,8 +34,10 @@
           <input type="hidden" value="{{filename}}" name="filename" />
           <input type="hidden" value="{{key}}" name="linesegment" />
           <select name="breaker" id="breaker" class="big_button">
-            {% for p in suppliedMarkers[key] %}
-            <option value="{{p['id']}}">{{p['name']}}</option>
+            {% for p in poi[key] %}
+              {% if loop.index != 1 and loop.index != (poi[key] | length) and p['relative'] == 'Marker'%}
+                <option value="{{p['id']}}">{{p['name']}}</option>
+              {% endif %}
             {% endfor %}
           </select>
           <input type="submit" class="big_button"/>

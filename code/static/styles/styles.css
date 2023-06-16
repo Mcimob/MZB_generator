@@ -218,3 +218,11 @@ input[type="text"] {
 .home_button svg:hover {
   fill: var(--icon-fill-hover);
 }
+
+select:not(:has(option)) {
+  display: none;
+}
+
+select:not(:has(option))+input {
+  display: none;
+}

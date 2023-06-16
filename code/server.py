@@ -53,7 +53,6 @@ def edit_kml(filename):
         plots=plots,
         filename=filename,
         poi=data["poi"],
-        suppliedMarkers=data["markers"],
         center=getCenterCoords(data["coords"]),
     )
 
