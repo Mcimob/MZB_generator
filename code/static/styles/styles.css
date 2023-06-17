@@ -218,14 +218,30 @@ input[type="text"] {
   
 }
 
-.home_button svg {
+.svg_fill {
   fill: var(--icon-fill);
+}
+
+.svg_fill:hover {
+  fill: var(--icon-fill-hover);
+}
+
+.svg_stroke {
+  stroke: var(--icon-fill);
+}
+
+.svg_stroke:hover {
+  stroke: var(--icon-fill-hover);
+}
+
+.px24 {
   width: 24px;
   height: 24px;
 }
 
-.home_button svg:hover {
-  fill: var(--icon-fill-hover);
+.px30 {
+  width: 30px;
+  height: 30px;
 }
 
 select:not(:has(option)) {

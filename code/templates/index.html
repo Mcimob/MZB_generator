@@ -1,34 +1,37 @@
-{% extends "base.html" %}
-{% block title%}MZB Generator {% endblock %}
-{% block content%}
-  <div class="page_container">
-    <h1>
-      Willkommen beim MZB Generator!
-    </h1>
-    <p>
-      Hier kannst du eine <code>.kml</code> Datei hochladen. Falls die Route aus mehreren Stücken besteht, werden die
-      Stücke automatisch verbunden.
-      Danach kannst du die Route bei den von dir gesetzten Markierungen auseinanderbrechen.
-      Für jedes Stück kannst du dann eine neue <code>.kml</code> Datei, sowie die dazugehörige Marschzeitberechnung
-      herunterladen.
-    </p>
-    <form enctype="multipart/form-data" action="/upload" method="post">
-      <input type="file" name="file" style="display:none" id="file_input" />
-      <input class="big_button" type="button" value="Datei auswählen" onclick="document.getElementById('file_input').click()" />
-      <input class="big_button" type="submit" value="Ausgewählte Datei hochladen" />
-      {% for file in files %}
-      <div class="overviewItem">
-        <p style="margin: 0">{{file.split('.')[0]}}</p>
-        <div>
-          <a href="/edit_kml/{{file.split('.')[0]}}">
-            <img src="/static/styles/images/edit-svgrepo-com.svg" width="30" />
-          </a>
-          <a href="/delete_kml/{{file.split('.')[0]}}">
-            <img src="/static/styles/images/trash-svgrepo-com.svg" width="30" />
-          </a>
-        </div>
+{% extends "base.html" %} {% block title%}MZB Generator {% endblock %} {% block
+content%}
+<div class="page_container">
+  <h1>Willkommen beim MZB Generator!</h1>
+  <p>
+    Hier kannst du eine <code>.kml</code> Datei hochladen. Falls die Route aus
+    mehreren Stücken besteht, werden die Stücke automatisch verbunden. Danach
+    kannst du die Route bei den von dir gesetzten Markierungen
+    auseinanderbrechen. Für jedes Stück kannst du dann eine neue
+    <code>.kml</code> Datei, sowie die dazugehörige Marschzeitberechnung
+    herunterladen.
+  </p>
+  <form enctype="multipart/form-data" action="/upload" method="post">
+    <input type="file" name="file" style="display: none" id="file_input" />
+    <input
+      class="big_button"
+      type="button"
+      value="Datei auswählen"
+      onclick="document.getElementById('file_input').click()"
+    />
+    <input
+      class="big_button"
+      type="submit"
+      value="Ausgewählte Datei hochladen"
+    />
+    {% for file in files %}
+    <div class="overviewItem">
+      <p style="margin: 0">{{file.split('.')[0]}}</p>
+      <div>
+        <a href="/edit_kml/{{file.split('.')[0]}}"> {{ icons.edit() }} </a>
+        <a href="/delete_kml/{{file.split('.')[0]}}"> {{ icons.trash() }} </a>
       </div>
-      {% endfor %}
-    </form>
-  </div>
+    </div>
+    {% endfor %}
+  </form>
+</div>
 {% endblock %}
