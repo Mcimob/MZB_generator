@@ -1,37 +1,23 @@
 {% extends "base.html" %} {% block title%}MZB Generator {% endblock %} {% block
 content%}
 <div class="page_container">
-  <h1>Willkommen beim MZB Generator!</h1>
+  <h1>Willkommen beim MZB Generator</h1>
   <p>
-    Hier kannst du eine <code>.kml</code> Datei hochladen. Falls die Route aus
-    mehreren Stücken besteht, werden die Stücke automatisch verbunden. Danach
-    kannst du die Route bei den von dir gesetzten Markierungen
-    auseinanderbrechen. Für jedes Stück kannst du dann eine neue
-    <code>.kml</code> Datei, sowie die dazugehörige Marschzeitberechnung
-    herunterladen.
+    Auf dieser Seite kannst du eine <code>.kml</code> Datei hochladen (z.B. von
+    <a href="https://map.geo.admin.ch">Geo Admin</a>), um für deine Route eine
+    Marschzeitberechnung (MZB) zu generieren.
   </p>
-  <form enctype="multipart/form-data" action="/upload" method="post">
-    <input type="file" name="file" style="display: none" id="file_input" />
-    <input
-      class="big_button"
-      type="button"
-      value="Datei auswählen"
-      onclick="document.getElementById('file_input').click()"
-    />
-    <input
-      class="big_button"
-      type="submit"
-      value="Ausgewählte Datei hochladen"
-    />
-    {% for file in files %}
-    <div class="overviewItem">
-      <p style="margin: 0">{{file.split('.')[0]}}</p>
-      <div>
-        <a href="/edit_kml/{{file.split('.')[0]}}"> {{ icons.edit() }} </a>
-        <a href="/delete_kml/{{file.split('.')[0]}}"> {{ icons.trash() }} </a>
-      </div>
-    </div>
-    {% endfor %}
-  </form>
+  <p>
+    Um diese Seite aber zu beutzen, musst du zuerst ein Konto erstellen. Hast du
+    bereits ein Konto, kannst du dich anmelden
+  </p>
+  <div class="row">
+    <a href="/register">
+      <button class="big_button">Registrieren</button>
+    </a>
+    <a href="/login">
+      <button class="big_button">Anmelden</button>
+    </a>
+  </div>
 </div>
 {% endblock %}

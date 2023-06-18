@@ -1,0 +1,40 @@
+{% extends "base.html" %} {% block title%}MZB Generator {% endblock %} {% block
+content%}
+<div class="page_container">
+  {% with messages = get_flashed_messages() %} {% if messages %}
+  <div class="register_alert">{{ messages[0] }}</div>
+  {% endif %} {% endwith %}
+  <h1>Willkommen beim MZB Generator {{user.name}}!</h1>
+  <p>
+    Hier kannst du eine <code>.kml</code> Datei hochladen. Falls die Route aus
+    mehreren Stücken besteht, werden die Stücke automatisch verbunden. Danach
+    kannst du die Route bei den von dir gesetzten Markierungen
+    auseinanderbrechen. Für jedes Stück kannst du dann eine neue
+    <code>.kml</code> Datei, sowie die dazugehörige Marschzeitberechnung
+    herunterladen.
+  </p>
+  <form enctype="multipart/form-data" action="/upload" method="post">
+    <input type="file" name="file" style="display: none" id="file_input" />
+    <input
+      class="big_button"
+      type="button"
+      value="Datei auswählen"
+      onclick="document.getElementById('file_input').click()"
+    />
+    <input
+      class="big_button"
+      type="submit"
+      value="Ausgewählte Datei hochladen"
+    />
+    {% for file in files %}
+    <div class="overviewItem">
+      <p style="margin: 0">{{file.title}}</p>
+      <div>
+        <a href="/edit_kml/{{file.id}}"> {{ icons.edit() }} </a>
+        <a href="/delete_kml/{{file.id}}"> {{ icons.trash() }} </a>
+      </div>
+    </div>
+    {% endfor %}
+  </form>
+</div>
+{% endblock %}
