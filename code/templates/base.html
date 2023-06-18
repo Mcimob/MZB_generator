@@ -27,7 +27,18 @@
       </p>
     <![endif]-->
     {{ icons.dark_toggle() }}
-    <a class="home_button" href="/"> {{ icons.home() }} </a>
+    <a
+      class="home_button"
+      href="
+    {%- if user is defined -%}
+      /home
+    {%- else -%}
+    /
+    {%- endif -%}
+    "
+    >
+      {{ icons.home() }}
+    </a>
     {% block content %} {% endblock %}
   </body>
 </html>

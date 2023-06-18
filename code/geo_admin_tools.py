@@ -13,6 +13,8 @@ from db.db_utils import (
     getCoordinateData,
     deleteCoordinateData,
 )
+from db.database import db
+from db.models import File
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
@@ -51,7 +53,7 @@ def generate_xlsx(fname, line_name):
 
 def combineAndSave(file, filename):
     data = createDataFromFile(file)
-    saveCoordinateData(filename.split("/")[-1].split(".")[0], data)
+    saveCoordinateData(filename, data)
 
 
 def createDataFromFile(file):
@@ -432,10 +434,12 @@ def getPointDistance(px, py, qx, qy):
     return (px - qx) ** 2 + (py - qy) ** 2
 
 
-def removeRecord(name):
-    deleteCoordinateData(name)
-    if (XLSX_FILE_LOCATION + name + ".xlsx") in os.listdir("./files/xlsx/"):
-        os.remove(XLSX_FILE_LOCATION + name + ".xlsx")
+def removeRecord(file_id):
+    fname = File.query.get(file_id).fname
+    deleteCoordinateData(fname)
+
+    db.session.delete(File.query.get(file_id))
+    db.session.commit()
 
 
 def closestPointOnCoords(coords, point):
@@ -529,7 +533,8 @@ def getCenterCoords(coords):
 
 
 def updatePoiNames(form):
-    fname = form["filename"]
+    file_id = form["file_id"]
+    fname = File.query.get(file_id).fname
     line_segment = form["linesegment"]
 
     data = getCoordinateData(fname)
@@ -542,7 +547,8 @@ def updatePoiNames(form):
 
 
 def updatePoiDisplay(form):
-    fname = form["filename"]
+    file_id = form["file_id"]
+    fname = File.query.get(file_id).fname
     line_segment = form["linesegment"]
 
     data = getCoordinateData(fname)

@@ -15,7 +15,8 @@ import tempfile
 from geo_admin_tools import *
 from db.database import db
 from db.db_utils import JSON_FILE_LOCATION
-from db.models import User
+from db.models import User, File
+from utils import getCurrentTimeString
 
 app = Flask(__name__)
 
@@ -35,11 +36,13 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-with app.app_context():
-    db.create_all()
-
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 
 @app.route("/register")
@@ -97,89 +100,112 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/")
+@app.route("/home")
 @login_required
 def home():
-    files = os.listdir(JSON_FILE_LOCATION)
-    return render_template("index.html", files=files)
+    files = current_user.files
+    return render_template("home.html", files=files, user=current_user)
 
 
 @app.route("/upload", methods=["POST"])
+@login_required
 def upload_kml():
     if "file" not in request.files:
         return "No file uploaded"
     file = request.files["file"]
     if file.filename == "":
         return "No file uploaded"
+
     current_files = os.listdir(KML_FILE_LOCATION)
-    if file.filename in current_files:
-        return "Please choose a different filename"
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        combineAndSave(file, KML_FILE_LOCATION + filename)
+    fname = getCurrentTimeString()
+    while f"{fname}.json" in current_files:
+        fname = str(int(fname) + 1)
+    if file:
+        new_file = File(
+            title=file.filename.split(".")[0],
+            fname=fname,
+        )
+        current_user.files.append(new_file)
+        db.session.commit()
+        combineAndSave(file, fname)
 
         return redirect(url_for("home"))
 
 
-@app.route("/edit_kml/<filename>")
-def edit_kml(filename):
-    data = getCoordinateData(filename)
+@app.route("/edit_kml/<file_id>")
+@login_required
+def edit_kml(file_id):
+    file = File.query.get(file_id)
+    if file.uploaded_by_userid != current_user.id:
+        flash("Du hast keine Berechtigungen auf diese Datei!")
+        return redirect(url_for("home"))
+    data = getCoordinateData(file.fname)
     plots = createPlots(data["poi"], data["coords"])
 
     return render_template(
         "edit_kml.html",
         plots=plots,
-        filename=filename,
+        file=file,
         poi=data["poi"],
         center=getCenterCoords(data["coords"]),
+        user=current_user,
     )
 
 
-@app.route("/delete_kml/<filename>")
-def delete_kml(filename):
-    removeRecord(filename)
+@app.route("/delete_kml/<file_id>")
+@login_required
+def delete_kml(file_id):
+    removeRecord(file_id)
     return redirect(url_for("home"))
 
 
-@app.route("/download_kml/<fname>/<line_name>")
-def download_kml(fname, line_name):
+@app.route("/download_kml/<file_id>/<line_name>")
+def download_kml(file_id, line_name):
+    file = File.query.get(file_id)
+    fname = file.fname
     tmp = tempfile.TemporaryFile()
     content = generate_kml(fname, line_name)
     tmp.write(content)
     tmp.seek(0)
-    return send_file(tmp, as_attachment=True, download_name=f"{fname}_{line_name}.kml")
+    return send_file(
+        tmp, as_attachment=True, download_name=f"{file.title}_{line_name}.kml"
+    )
 
 
-@app.route("/download_xlsx/<fname>/<line_name>")
-def download_xlsx(fname, line_name):
+@app.route("/download_xlsx/<file_id>/<line_name>")
+def download_xlsx(file_id, line_name):
+    file = File.query.get(file_id)
+    fname = file.fname
     tmp = tempfile.NamedTemporaryFile(suffix=".xlsx")
     book = generate_xlsx(fname, line_name)
     book.save(tmp)
     tmp.seek(0)
-    return send_file(tmp, as_attachment=True, download_name=f"{fname}_{line_name}.xlsx")
+    return send_file(
+        tmp, as_attachment=True, download_name=f"{file.title}_{line_name}.xlsx"
+    )
 
 
 @app.route("/break_kml", methods=["POST"])
+@login_required
 def break_kml():
-    fname = request.form["filename"]
+    file_id = request.form["file_id"]
     break_point = request.form["breaker"]
     line_segment = request.form["linesegment"]
+
+    fname = File.query.get(file_id).fname
     breakLineAtPoint(fname, line_segment, break_point)
-    return redirect(url_for("edit_kml", filename=fname))
+    return redirect(url_for("edit_kml", file_id=file_id))
 
 
 @app.route("/update_poi", methods={"POST"})
+@login_required
 def update_poi():
     form = request.form
-    fname = form["filename"]
+    file_id = form["file_id"]
     updatePoiNames(form)
     updatePoiDisplay(form)
 
-    return redirect(url_for("edit_kml", filename=fname))
-
-
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() == "kml"
+    return redirect(url_for("edit_kml", file_id=file_id))
 
 
 def createPlots(poi, coords):

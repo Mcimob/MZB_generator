@@ -1,94 +1,109 @@
-{% extends "base.html" %}
-{% import 'icons.html' as icons%}
-{% block head %}
-{{ super() }}
+{% extends "base.html" %} {% import 'icons.html' as icons%} {% block head %} {{
+super() }}
 <script>
   function showSaveButton(key) {
     document.getElementById("save_" + key).style = "";
     document.getElementById("save_" + key + "_text").style = "";
   }
-
 </script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-{% endblock %}
-{% block title%}KML bearbeiten{% endblock %}
-{% block content %}
-  <h1>Bearbeite <code>{{filename}}.kml</code></h1>
-  <div class="editLineContainer">
-    {% for key, item in poi.items() %}
-    <div class="editing_item">
-      <div class="map_and_graph">
-        <iframe
-          src='https://map.geo.admin.ch/embed.html?layers=KML%7C%7Chttp:%2F%2Fmzb-generator.pfaditools.ch%2Fdownload_kml%2F{{filename}}%2F{{key}}&E={{center[key][1]}}&N={{center[key][0]}}&zoom=4'
-          width='400' height='300' frameborder='0' style='border:0' allow='geolocation'></iframe>
-        <div class="graph_container">
-        <div class="default_graph">
-          {{plots[key][0] | safe}}
-        </div>
-        <div class="dark_graph">
-          {{plots[key][1] | safe}}
-        </div>
-        </div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %} {% block title%}KML bearbeiten{% endblock %} {% block content %}
+<h1>Bearbeite <code>{{file.title}}</code></h1>
+<div class="editLineContainer">
+  {% for key, item in poi.items() %}
+  <div class="editing_item">
+    <div class="map_and_graph">
+      <iframe
+        src="https://map.geo.admin.ch/embed.html?layers=KML%7C%7Chttp:%2F%2Fmzb-generator.pfaditools.ch%2Fdownload_kml%2F{{file.id}}%2F{{key}}&E={{center[key][1]}}&N={{center[key][0]}}&zoom=4"
+        width="400"
+        height="300"
+        frameborder="0"
+        style="border: 0"
+        allow="geolocation"
+      ></iframe>
+      <div class="graph_container">
+        <div class="default_graph">{{plots[key][0] | safe}}</div>
+        <div class="dark_graph">{{plots[key][1] | safe}}</div>
       </div>
-      <div>
-        <label for="breakers">Wähle eine Stelle für einen Unterbruch:</label>
-        <form id="breakpoint_{{key}}" action="/break_kml" method="post">
-          <input type="hidden" value="{{filename}}" name="filename" />
-          <input type="hidden" value="{{key}}" name="linesegment" />
-          <select name="breaker" id="breaker" class="big_button">
-            {% for p in poi[key] %}
-              {% if loop.index != 1 and loop.index != (poi[key] | length) and p['relative'] == 'Marker'%}
-                <option value="{{p['id']}}">{{p['name']}}</option>
-              {% endif %}
-            {% endfor %}
-          </select>
-          <input type="submit" class="big_button" value="Absenden"/>
-        </form>
-        <input class="spoilerbutton big_button" type="button" value="Details Anzeigen"
-          onclick="this.value = this.value == 'Details Verstecken' ? 'Details Anzeigen' : 'Details Verstecken'" />
-        <div class="spoiler">
-          <div class="row between">
-            <h3>{{item[0]['name']}} - {{item[-1]['name']}}</h3>
-            <div>
-              <a href="/download_xlsx/{{filename}}/{{key}}">
-                {{ icons.xlsx() }}
-              </a>
-              <a href="/download_kml/{{filename}}/{{key}}">
-                {{ icons.kml() }}
-              </a>
+    </div>
+    <div>
+      <label for="breakers">Wähle eine Stelle für einen Unterbruch:</label>
+      <form id="breakpoint_{{key}}" action="/break_kml" method="post">
+        <input type="hidden" value="{{file.id}}" name="file_id" />
+        <input type="hidden" value="{{key}}" name="linesegment" />
+        <select name="breaker" id="breaker" class="big_button">
+          {% for p in poi[key] %} {% if loop.index != 1 and loop.index !=
+          (poi[key] | length) and p['relative'] == 'Marker'%}
+          <option value="{{p['id']}}">{{p['name']}}</option>
+          {% endif %} {% endfor %}
+        </select>
+        <input type="submit" class="big_button" value="Absenden" />
+      </form>
+      <input
+        class="spoilerbutton big_button"
+        type="button"
+        value="Details Anzeigen"
+        onclick="this.value = this.value == 'Details Verstecken' ? 'Details Anzeigen' : 'Details Verstecken'"
+      />
+      <div class="spoiler">
+        <div class="row between">
+          <h3>{{item[0]['name']}} - {{item[-1]['name']}}</h3>
+          <div>
+            <a href="/download_xlsx/{{file.id}}/{{key}}">
+              {{ icons.xlsx() }}
+            </a>
+            <a href="/download_kml/{{file.id}}/{{key}}"> {{ icons.kml() }} </a>
+          </div>
+        </div>
+        <div class="spoilable">
+          <form method="post" action="/update_poi" class="poi_form">
+            <input type="hidden" value="{{file.id}}" name="file_id" />
+            <input type="hidden" value="{{key}}" name="linesegment" />
+            <table class="poi_table">
+              <tr>
+                <th>Name</th>
+                <th>Höhe</th>
+                <th>Summe Distanz</th>
+                <th>Auf Karte <br />anzeigen</th>
+              </tr>
+              {% for p in item %}
+              <tr>
+                <td>
+                  <input
+                    type="text"
+                    value="{{p['name']}}"
+                    oninput="showSaveButton('{{key}}')"
+                    name="name_{{loop.index}}"
+                  />
+                </td>
+                <td>{{p['alt']}} m</td>
+                <td>{{(p['dist'] / 1000) | round(2)}} km</td>
+                <td>
+                  <input type="checkbox" name="show_{{loop.index}}" {% if
+                  p['display'] %}checked{% endif %}
+                  onchange="showSaveButton('{{key}}')">
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+            <div class="row between fullwidth">
+              <input
+                class="big_button"
+                type="submit"
+                value="Punkte aktualisieren"
+                style="display: none"
+                id="save_{{key}}"
+              />
+              <p style="display: none" id="save_{{key}}_text">
+                <b>Achtung</b>: Du musst speichern, damit deine Änderungen
+                effektiv sind!
+              </p>
             </div>
-          </div>
-          <div class="spoilable">
-            <form method="post" action="/update_poi" class="poi_form">
-              <input type="hidden" value="{{filename}}" name="filename" />
-              <input type="hidden" value="{{key}}" name="linesegment" />
-              <table class="poi_table">
-                <tr>
-                  <th>Name</th>
-                  <th>Höhe</th>
-                  <th>Summe Distanz</th>
-                  <th>Auf Karte <br/>anzeigen</th>
-                </tr>
-                {% for p in item %}
-                <tr>
-                  <td><input type="text" value="{{p['name']}}" oninput="showSaveButton('{{key}}')"
-                      name="name_{{loop.index}}" /></td>
-                  <td>{{p['alt']}} m</td>
-                  <td>{{(p['dist'] / 1000) | round(2)}} km</td>
-                  <td><input type="checkbox" name="show_{{loop.index}}" {% if p['display'] %}checked{% endif %} onchange="showSaveButton('{{key}}')"></td>
-                </tr>
-                {% endfor %}
-              </table>
-              <div class="row between fullwidth">
-                <input class="big_button" type="submit" value="Punkte aktualisieren" style="display:none" id="save_{{key}}" />
-                <p style="display:none" id="save_{{key}}_text"><b>Achtung</b>: Du musst speichern, damit deine Änderungen effektiv sind!</p>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
       </div>
     </div>
-    {% endfor %}
-
   </div>
-  {% endblock %}
+  {% endfor %}
+</div>
+{% endblock %}
