@@ -6,3 +6,4 @@ code/db/json/
 *.xlsx
 !code/files/kml/base.kml
 !code/files/xlsx/base.xlsx
+code/instance/

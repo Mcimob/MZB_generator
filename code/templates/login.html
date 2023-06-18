@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}Anmelden{% endblock %} {% block
+content %}
+<h1>Anmelden</h1>
+<form method="POST" action="/login">
+  <div class="signup_container">
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <div class="register_alert">{{ messages[0] }}</div>
+    {% endif %} {% endwith %}
+    <input
+      class="big_input"
+      type="email"
+      name="email"
+      placeholder="Email"
+      ,
+      autofocus=""
+    />
+    <input
+      class="big_input"
+      type="password"
+      name="password"
+      placeholder="Password"
+    />
+    <label class="checkbox">
+      <input type="checkbox" name="remember" />
+      Remember me
+    </label>
+    <input type="submit" class="big_button" value="Anmelden" />
+  </div>
+</form>
+{% endblock %}

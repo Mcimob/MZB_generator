@@ -1,27 +1,105 @@
 import os
-from flask import (
-    Flask,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    send_file,
+from flask import Flask, render_template, request, redirect, url_for, send_file, flash
+from flask_login import (
+    LoginManager,
+    login_user,
+    login_required,
+    current_user,
+    logout_user,
 )
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 import plotly.graph_objects as go
 import plotly
-from geo_admin_tools import *
-from db.db_utils import JSON_FILE_LOCATION
 import tempfile
+from geo_admin_tools import *
+from db.database import db
+from db.db_utils import JSON_FILE_LOCATION
+from db.models import User
 
 app = Flask(__name__)
+
+app.config["SECRET_KEY"] = "PnC3Xr?nxgjsXN$o"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+
+db.init_app(app)
+
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
+login_manager.login_message = "Du musst angemeldet sein, um diese Seite zu sehen!"
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+with app.app_context():
+    db.create_all()
 
 KML_FILE_LOCATION = "./files/kml/"
 XLSX_FILE_LOCATION = "./files/xlsx/"
 
 
+@app.route("/register")
+def register():
+    return render_template("register.html")
+
+
+@app.route("/register", methods=["POST"])
+def register_post():
+    email = request.form.get("email")
+    name = request.form.get("name")
+    password = request.form.get("password")
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        flash("Email-Addresse ist bereits vergeben!")
+        return redirect(url_for("register"))
+
+    new_user = User(
+        email=email,
+        name=name,
+        password=generate_password_hash(password, method="sha256"),
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect(url_for("login"))
+
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
+
+@app.route("/login", methods=["POST"])
+def login_post():
+    email = request.form.get("email")
+    password = request.form.get("password")
+    remember = True if request.form.get("remember") else False
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not check_password_hash(user.password, password):
+        flash("Irgendewas stimmt nicht. Überprüfe bitte deine Angaben.")
+        return redirect(url_for("login"))
+
+    login_user(user, remember=remember)
+    return redirect(url_for("home"))
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
+
+
 @app.route("/")
-def index():
+@login_required
+def home():
     files = os.listdir(JSON_FILE_LOCATION)
     return render_template("index.html", files=files)
 
@@ -40,7 +118,7 @@ def upload_kml():
         filename = secure_filename(file.filename)
         combineAndSave(file, KML_FILE_LOCATION + filename)
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home"))
 
 
 @app.route("/edit_kml/<filename>")
@@ -60,7 +138,7 @@ def edit_kml(filename):
 @app.route("/delete_kml/<filename>")
 def delete_kml(filename):
     removeRecord(filename)
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
 @app.route("/download_kml/<fname>/<line_name>")

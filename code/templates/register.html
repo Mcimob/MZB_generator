@@ -1,0 +1,35 @@
+{% extends "base.html" %} {% block title %}Registrieren{% endblock %} {% block
+content %}
+<h1>Registrierern</h1>
+<form method="POST" action="/register">
+  <div class="signup_container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="register_alert">{{ messages[0] }}</div>
+    {% endif %}
+  {% endwith %}
+    <input
+      class="big_input"
+      type="email"
+      name="email"
+      placeholder="Email"
+      ,
+      autofocus=""
+    />
+    <input
+      class="big_input"
+      type="text"
+      name="name"
+      placeholder="Name"
+      autofocus=""
+    />
+    <input
+      class="big_input"
+      type="password"
+      name="password"
+      placeholder="Password"
+    />
+    <input type="submit" class="big_button" value="Registrieren">
+  </div>
+</form>
+{% endblock %}

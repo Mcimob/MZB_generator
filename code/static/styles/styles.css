@@ -28,7 +28,7 @@ body {
   align-items: center;
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  font-family: sans-serif;
   
 }
 
@@ -145,7 +145,7 @@ input[type="button"], input[type="submit"] {
  cursor: pointer;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"], input[type="email"]{
   background-color: var(--bg-color);
   border-radius: 5px;
   border-style: solid;
@@ -250,4 +250,32 @@ select:not(:has(option)) {
 
 select:not(:has(option))+input {
   display: none;
+}
+
+.signup_container {
+  border: solid 2px var(--border-color);
+  border-radius: var(--border-radius-big);
+  padding: var(--border-radius-big);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--alt-bg-color);
+  width: 300px;
+}
+
+.big_input {
+  font-size: 20px;
+  padding: 10px;
+  margin: 5px;
+  width: 90%;
+}
+
+.register_alert {
+  background-color: tomato;
+  padding: 10px;
+  margin: 5px;
+  width: 90%;
+  border: solid 2px var(--border-color);
+  border-radius: 10px;
+  color: black;
 }
