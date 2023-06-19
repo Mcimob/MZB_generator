@@ -1,0 +1,24 @@
+{% extends "base.html" %} {% block title%}Admin Bereich{% endblock %} {% block
+content %}
+<div class="page_container">
+  <h1>Willkommen im Admin Bereich!</h1>
+  <table class="poi_table">
+    <tr>
+      <th>User-ID</th>
+      <th>Name</th>
+      <th>E-Mail</th>
+      <th>#Files</th>
+      <th>Admin</th>
+    </tr>
+    {% for user in users %}
+    <tr>
+      <td>{{user.id}}</td>
+      <td>{{user.name}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.files | length}}</td>
+      <td>{{user.admin}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

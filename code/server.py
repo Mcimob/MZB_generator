@@ -100,6 +100,18 @@ def logout():
     return redirect(url_for("login"))
 
 
+@app.route("/admin")
+@login_required
+def admin():
+    if not current_user.admin:
+        flash("Du hast keine Admin Berechtigungen!")
+        return redirect(url_for("home"))
+
+    users = User.query.all()
+
+    return render_template("admin.html", users=users, user=current_user)
+
+
 @app.route("/home")
 @login_required
 def home():

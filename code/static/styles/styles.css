@@ -89,6 +89,7 @@ body {
 }
 
 .page_container {
+  width: 80%;
   max-width: 800px;
 }
 
