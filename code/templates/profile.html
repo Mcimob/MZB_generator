@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block title%}Profil{% endblock %} {% block content
+%}
+<div class="page_container poi_form">
+  {% with messages = get_flashed_messages() %} {% if messages %}
+  <div class="register_alert">{{ messages[0] }}</div>
+  {% endif %} {% endwith %}
+  <h1>Willkomen zu deinem Profil!</h1>
+  <form action="/profile" method="post">
+    <div class="profile-section">
+      <div class="grid-box">Name:</div>
+      <div class="grid-box">
+        <input
+          type="text"
+          value="{{user.name}}"
+          name="name"
+          oninput="document.getElementById('profile_submit_button').style=''"
+        />
+      </div>
+      <div class="grid-box">E-mail:</div>
+      <div class="grid-box">
+        <input
+          type="email"
+          value="{{user.email}}"
+          name="email"
+          oninput="document.getElementById('profile_submit_button').style=''"
+        />
+      </div>
+    </div>
+    <input
+      class="big_button"
+      type="submit"
+      value="Änderungen speichern"
+      style="display: none"
+      id="profile_submit_button"
+    />
+  </form>
+</div>
+{% endblock %}

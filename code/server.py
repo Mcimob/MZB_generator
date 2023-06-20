@@ -112,6 +112,28 @@ def admin():
     return render_template("admin.html", users=users, user=current_user)
 
 
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html", user=current_user)
+
+
+@app.route("/profile", methods=["POST"])
+@login_required
+def profile_post():
+    potential_conflicts = User.query.filter_by(email=request.form["email"]).all()
+    if len(potential_conflicts) > 1 or (
+        len(potential_conflicts) == 1 and potential_conflicts[0] != current_user
+    ):
+        flash("Diese E-Mail Adresse wird bereits benutzt!")
+        return redirect(url_for("profile"))
+    current_user.name = request.form["name"]
+    current_user.email = request.form["email"]
+    db.session.commit()
+
+    return redirect(url_for("profile"))
+
+
 @app.route("/home")
 @login_required
 def home():
