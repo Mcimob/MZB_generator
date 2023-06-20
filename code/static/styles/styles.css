@@ -21,10 +21,9 @@ html[data-theme='dark'] {
 }
 
 body {
-  margin: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  margin: 0;
   align-items: center;
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -213,26 +212,19 @@ input[type="text"], input[type="password"], input[type="email"]{
   border-top-right-radius: var(--border-radius-big);
 }
 
-.home_button {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  
-}
-
-.svg_fill {
+.svg_fill  *  {
   fill: var(--icon-fill);
 }
 
-.svg_fill:hover {
+.svg_fill:hover * {
   fill: var(--icon-fill-hover);
 }
 
-.svg_stroke {
+.svg_stroke * {
   stroke: var(--icon-fill);
 }
 
-.svg_stroke:hover {
+.svg_stroke:hover * {
   stroke: var(--icon-fill-hover);
 }
 
@@ -306,4 +298,30 @@ select:not(:has(option))+input {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.navbar {
+  width: 80%;
+  max-width: 800px;
+  height: 80px;
+  display: flex;
+  flex-direction: row;
+}
+
+.nav_item {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: var(--alt-bg-color);
+  padding: 10px;
+  border-bottom: solid 2px var(--border-color);
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.nav_item:hover {
+  color: var(--border-color);
+  filter: brightness(calc(((1 - var(--is-default-mode)) * 30%) + 85%))
 }

@@ -27,18 +27,34 @@
       </p>
     <![endif]-->
     {{ icons.dark_toggle() }}
-    <a
-      class="home_button"
-      href="
-    {%- if user is defined -%}
-      /home
-    {%- else -%}
-    /
-    {%- endif -%}
-    "
-    >
-      {{ icons.home() }}
-    </a>
-    {% block content %} {% endblock %}
+    {% if user is defined %}
+    <div class="navbar">
+      <a
+        class="nav_item"
+        href="/home"
+      >
+        {{ icons.home() }}
+        <div>Home</div>
+      </a>
+      <a class="nav_item" href="/profile">
+        {{ icons.profile() }}
+        <div>Profil</div>
+      </a>
+      <div class="nav_item"></div>
+      {% if user.admin %}
+      <a class="nav_item" href="/admin">
+      {{ icons.admin_settings() }}
+      <div>Admin</div>
+      </a>
+      {% else %}
+      <div class="nav_item"></div>
+      {% endif %}
+      <a class="nav_item" href="/logout">
+        {{ icons.logout() }}
+        <div>Ausloggen</div>
+      </a>
+    </div>
+    {% endif %}
+     {% block content %} {% endblock %}
   </body>
 </html>
