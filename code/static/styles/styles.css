@@ -306,6 +306,14 @@ select:not(:has(option))+input {
   filter: brightness(calc(((1 - var(--is-default-mode)) * 30%) + 85%))
 }
 
+.nav_item:hover .svg_fill * {
+  fill: var(--icon-fill-hover);
+}
+
+.nav_item:hover .svg_stroke * {
+  stroke: var(--icon-fill-hover);
+}
+
 .rounded-box-background {
   padding: 20px;
   margin: 10px;
