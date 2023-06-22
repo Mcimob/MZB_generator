@@ -134,6 +134,12 @@ def profile_post():
     return redirect(url_for("profile"))
 
 
+@app.route("/about")
+@login_required
+def about():
+    return render_template("about.html", user=current_user)
+
+
 @app.route("/home")
 @login_required
 def home():

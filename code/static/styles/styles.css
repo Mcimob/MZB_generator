@@ -325,3 +325,11 @@ select:not(:has(option))+input {
   color: var(--border-color);
   filter: brightness(calc(((1 - var(--is-default-mode)) * 30%) + 85%))
 }
+
+.rounded-box-background {
+  border: solid 2px var(--border-color);
+  border-radius: var(--border-radius-big);
+  padding: 10px;
+  margin: 10px;
+  background-color: var(--alt-bg-color);
+}
