@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% block title%}MZB Generator {% endblock %} {% block
-content%}
+{% extends "base.html" %} {% block title%}Info{% endblock %} {% block content%}
 <div class="page_container">
   <h1>Infos</h1>
   <div class="rounded-box-background">
@@ -10,6 +9,34 @@ content%}
     unten anbringen.
   </div>
 
+  <h1>Deine Rückmeldung</h1>
+  <div class="rounded-box-background">
+    <div>
+      Hier kannst du mir eine Rückmeldung schreiben. Wenn du eine Idee oder
+      einen Verbesserungsvorschlag hast, kannst du diesen hier anbringen.
+      Ebenfalls kannst du eufgekommene Fehler hier anbringen.
+    </div>
+    <form action="/add_suggestion" method="POST">
+      <div class="row between">
+        <input type="text" name="title" placeholder="Titel..." />
+        <div>
+          <label for="type">Art von Rückmeldung:</label>
+          <select name="type">
+            <option value="else">Sonstiges</option>
+            <option value="bug">Fehler</option>
+            <option value="feature">Verbesserungsvorschlag</option>
+          </select>
+        </div>
+      </div>
+      <textarea
+        rows="5"
+        cols="50"
+        name="text"
+        placeholder="Deine Rückmeldung..."
+      ></textarea>
+      <input class="big_button" type="Submit" value="Rückmeldung abschicken" />
+    </form>
+  </div>
   <h1>Updates</h1>
   <div class="rounded-box-background row between">
     <div>Info Seite wurde hinzugefügt.</div>

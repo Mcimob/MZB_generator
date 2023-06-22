@@ -1,7 +1,7 @@
 {% extends "base.html" %} {% block title%}Admin Bereich{% endblock %} {% block
 content %}
 <div class="page_container">
-  <h1>Willkommen im Admin Bereich!</h1>
+  <h1>Benutzer</h1>
   <table class="poi_table">
     <tr>
       <th>User-ID</th>
@@ -20,5 +20,20 @@ content %}
     </tr>
     {% endfor %}
   </table>
+
+  <h1>Rückmeldungen</h1>
+  {% for sug in suggestions %}
+  <div class="rounded-box-background suggestion">
+    <div class="row between">
+      <div>{{ sug.title }}</div>
+      <div>{{ sug.date_added.strftime('%Y-%m-%d') }}</div>
+    </div>
+    <div>{{ sug.text }}</div>
+    <div class="row between">
+      <div>{{ sug.uploaded_by_userid }}</div>
+      <div>{{ sug.uploaded_by.name }}</div>
+    </div>
+  </div>
+  {% endfor %}
 </div>
 {% endblock %}

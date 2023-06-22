@@ -18,3 +18,13 @@ class File(db.Model):
     date_uploaded = db.Column(db.DateTime, default=datetime.datetime.utcnow)
     uploaded_by_userid = db.Column(db.Integer, db.ForeignKey("user.id"))
     uploaded_by = db.relationship("User", backref=db.backref("files", lazy=True))
+
+
+class Suggestion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    text = db.Column(db.String(10_000))
+    suggestion_type = db.Column(db.String(20))
+    date_added = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    uploaded_by_userid = db.Column(db.Integer, db.ForeignKey("user.id"))
+    uploaded_by = db.relationship("User", backref=db.backref("suggestions", lazy=True))

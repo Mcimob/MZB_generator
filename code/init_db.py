@@ -10,6 +10,8 @@ def main():
 
 
 def init_admin_user():
+    if User.query.get(1):
+        return
     user = User(
         email="burckhardttim@gmail.com",
         name="Tim",

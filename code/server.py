@@ -15,7 +15,7 @@ import tempfile
 from geo_admin_tools import *
 from db.database import db
 from db.db_utils import JSON_FILE_LOCATION
-from db.models import User, File
+from db.models import User, File, Suggestion
 from utils import getCurrentTimeString
 
 app = Flask(__name__)
@@ -109,7 +109,9 @@ def admin():
 
     users = User.query.all()
 
-    return render_template("admin.html", users=users, user=current_user)
+    return render_template(
+        "admin.html", users=users, user=current_user, suggestions=Suggestion.query.all()
+    )
 
 
 @app.route("/profile")
@@ -138,6 +140,22 @@ def profile_post():
 @login_required
 def about():
     return render_template("about.html", user=current_user)
+
+
+@app.route("/add_suggestion", methods=["POST"])
+@login_required
+def add_suggestion():
+    form = request.form
+    suggestion = Suggestion(
+        title=form["title"],
+        text=form["text"],
+        suggestion_type=form["type"],
+        uploaded_by=current_user,
+    )
+    db.session.add(suggestion)
+    db.session.commit()
+
+    return redirect(url_for("about"))
 
 
 @app.route("/home")
