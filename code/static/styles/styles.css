@@ -32,13 +32,6 @@ body {
 }
 
 .overviewItem {
-  background-color: var(--alt-bg-color);
-  border-style: solid;
-  border-width: 2px;
-  border-color: var(--border-color);
-  border-radius: var(--border-radius-big);
-  padding: 10px;
-  margin: 10px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -54,11 +47,6 @@ body {
 
 .spoiler {
   overflow: hidden;
-  background-color: var(--alt-bg-color);
-  border-radius: var(--border-radius-big);
-  padding: 10px;
-  margin: 10px;
-  display: flex;
   flex-direction: column;
   align-items: center;
 }
@@ -247,13 +235,9 @@ select:not(:has(option))+input {
 }
 
 .signup_container {
-  border: solid 2px var(--border-color);
-  border-radius: var(--border-radius-big);
-  padding: var(--border-radius-big);
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: var(--alt-bg-color);
   width: 300px;
 }
 
@@ -285,13 +269,9 @@ select:not(:has(option))+input {
 .profile-section {
   display: grid;
   grid-template-columns: auto auto;
-  border: solid 2px var(--border-color);
-  border-radius: var(--border-radius-big);
   padding: var(--border-radius-big);
-  background-color: var(--alt-bg-color);
   width: 500px;
   justify-content: space-between;
-  margin: 10px;
 }
 
 .grid-box {
@@ -327,11 +307,14 @@ select:not(:has(option))+input {
 }
 
 .rounded-box-background {
-  border: solid 2px var(--border-color);
-  border-radius: var(--border-radius-big);
   padding: 20px;
   margin: 10px;
   background-color: var(--alt-bg-color);
+  border-radius: var(--border-radius-big);
+}
+
+.box-border {
+  border: solid 2px var(--border-color);
 }
 
 textarea {

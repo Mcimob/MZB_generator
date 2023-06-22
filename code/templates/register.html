@@ -2,12 +2,10 @@
 content %}
 <h1>Registrierern</h1>
 <form method="POST" action="/register">
-  <div class="signup_container">
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      <div class="register_alert">{{ messages[0] }}</div>
-    {% endif %}
-  {% endwith %}
+  <div class="signup_container rounded-box-background box-border">
+    {% with messages = get_flashed_messages() %} {% if messages %}
+    <div class="register_alert">{{ messages[0] }}</div>
+    {% endif %} {% endwith %}
     <input
       class="big_input"
       type="email"
@@ -29,7 +27,7 @@ content %}
       name="password"
       placeholder="Password"
     />
-    <input type="submit" class="big_button" value="Registrieren">
+    <input type="submit" class="big_button" value="Registrieren" />
   </div>
 </form>
 {% endblock %}

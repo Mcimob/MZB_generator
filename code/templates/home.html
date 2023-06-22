@@ -14,23 +14,33 @@ content%}
     herunterladen.
   </p>
   <form enctype="multipart/form-data" action="/upload" method="post">
-  <div class="row">
-    <input type="file" name="file" style="display: none" id="file_input" onchange="document.getElementById('filename-container').innerHTML = this.value.split('\\')[2]; document.getElementById('filename-container').style=''"/>
-    <input
-      class="big_button"
-      type="button"
-      value="Datei auswählen"
-      onclick="document.getElementById('file_input').click()"
-    />
-    <input
-      class="big_button"
-      type="submit"
-      value="Ausgewählte Datei hochladen"
-    />
+    <div class="row">
+      <input
+        type="file"
+        name="file"
+        style="display: none"
+        id="file_input"
+        onchange="document.getElementById('filename-container').innerHTML = this.value.split('\\')[2]; document.getElementById('filename-container').style=''"
+      />
+      <input
+        class="big_button"
+        type="button"
+        value="Datei auswählen"
+        onclick="document.getElementById('file_input').click()"
+      />
+      <input
+        class="big_button"
+        type="submit"
+        value="Ausgewählte Datei hochladen"
+      />
     </div>
-    <div class="code_container" id="filename-container" style="display: none"></div>
+    <div
+      class="code_container"
+      id="filename-container"
+      style="display: none"
+    ></div>
     {% for file in files %}
-    <div class="overviewItem">
+    <div class="overviewItem rounded-box-background box-border">
       <p style="margin: 0">{{file.title}}</p>
       <div>
         <a href="/edit_kml/{{file.id}}"> {{ icons.edit() }} </a>
